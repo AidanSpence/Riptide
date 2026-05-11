@@ -14,35 +14,58 @@ body{
 }
 html, body {
     width: 100%;
-    height: 100%;
+    height: 100vmin;
     margin: 0;
 }
 
+
+.header-bar{
+  width:100%;
+  height:10vmin;
+  background-color: #2700D4;
+  margin-top: -20px;
+  margin-bottom: 22px;
+
+
+  border-radius: 24px;
+}
+
 .grid-container{
-  grid-template-columns: auto auto auto;
+  display: grid;
+  grid-template-columns: 528px 660px 660px;
+  grid-template-rows: 2;
+  height: 88%;
+  gap: 24px
 }
 
-.nav-box{
-  width:100px;
-  height:100px;
+
+.nav-box{ /* 528px / ratio of 4: */
+  width:100%;
+  height:100%;
   background-color: blue;
+  border-radius: 24px;
 }
 
-.playlist-box{
-  width:100px;
-  height:100px;
+.playlist-box{ /* 660px / ratio of 5: */
+  width:100%;
+  height:100%;
   background-color: red;
+  border-radius: 24px;
 }
 
-.chat-box{
-  width:100px;
-  height:100px;
+.chat-box{ /* 660px/ ratio of 5: */
+  width:100%;
+  height:100%;
   background-color: green;
+  border-radius: 24px;
 }
 
 
 h1 {
     color: lime;
+}
+p{
+  color: white;
 }
 
 
