@@ -12,9 +12,16 @@ body{
     
 
 }
-html, body {
+
+html{
+  scroll-behavior: smooth;
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
     width: 100%;
-    height: 100vmin;
+    height: 100%;
     margin: 0;
 }
 
@@ -23,16 +30,16 @@ html, body {
   width:100%;
   height:10vmin;
   background-color: #2700D4;
-  margin-top: -20px;
-  margin-bottom: 22px;
+  margin-top: -2%;
+  margin-bottom: 3%;
 
 
-  border-radius: 24px;
+  
 }
 
 .grid-container{
   display: grid;
-  grid-template-columns: 528px 660px 660px;
+  grid-template-columns: 4fr 5fr 5fr;
   grid-template-rows: 2;
   height: 88%;
   gap: 24px
@@ -42,22 +49,22 @@ html, body {
 .nav-box{ /* 528px / ratio of 4: */
   width:100%;
   height:100%;
-  background-color: blue;
-  border-radius: 24px;
+  background-color: grey;
+  border-radius: 3vmin;
 }
 
 .playlist-box{ /* 660px / ratio of 5: */
   width:100%;
   height:100%;
-  background-color: red;
-  border-radius: 24px;
+  background-color: grey;
+  border-radius: 3vmin;
 }
 
 .chat-box{ /* 660px/ ratio of 5: */
   width:100%;
   height:100%;
-  background-color: green;
-  border-radius: 24px;
+  background-color: grey;
+  border-radius: 3vmin;
 }
 
 
