@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="12da0509-e800-487d-b8ce-492f96ddcaf9" name="Changes" comment="" />
+    <list default="true" id="504e7136-110e-4840-a938-c7b120c3745d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -11,9 +14,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
   "associatedIndex": 7
 }]]></component>
-  <component name="ProjectId" id="3DQfz5HgLUliMXfnoG42janEW8a" />
+  <component name="ProjectId" id="3DZ4dvlgBhAhSL9qTszNan1v3oQ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -27,7 +31,11 @@
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "model",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "D:/Users/270385733/OneDrive - UP Education/Documents/GitHub/Riptide",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
@@ -42,12 +50,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="12da0509-e800-487d-b8ce-492f96ddcaf9" name="Changes" comment="" />
-      <created>1778219476168</created>
+      <changelist id="504e7136-110e-4840-a938-c7b120c3745d" name="Changes" comment="" />
+      <created>1778476354626</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1778219476168</updated>
-      <workItem from="1778219477392" duration="384000" />
+      <updated>1778476354626</updated>
+      <workItem from="1778476356743" duration="1528000" />
     </task>
     <servers />
   </component>

@@ -1,15 +1,19 @@
-import pandas
-import glob
 import hdf5_getters as g
 from pathlib import Path
 import csv 
+import numpy as np
+
+i = 0
 
 base = Path(r'..\Riptide\millionsongsubset')
 files = list(base.rglob("*.h5"))
 
-print(files)
-
 with open("output.csv", "w", encoding="utf-8", newline="") as f:
+
+    # To stop newline characters
+    np.set_printoptions(linewidth=np.inf)
+
+
     writer = csv.writer(f)
     writer.writerow(["title","artist_name","release","year","duration","tempo","time_signature","energy",
                         "danceability","key","loudness","mode","beats_start","end_of_fade_in","start_of_fade_out",
@@ -17,7 +21,7 @@ with open("output.csv", "w", encoding="utf-8", newline="") as f:
                         "segments_pitches","segments_start","segments_timbre","artist_terms","similar_artists","location"])
 
     for f in files:
-        print("next")
+        i += 1
         h5 = g.open_h5_file_read(f)
         title = g.get_title(h5)
         artist_name = g.get_artist_name(h5)
@@ -46,10 +50,12 @@ with open("output.csv", "w", encoding="utf-8", newline="") as f:
         artist_terms = g.get_artist_terms(h5)
         similar_artists = g.get_similar_artists(h5)
         location = g.get_artist_location(h5)
-        print("loaded")
+
+        beats_start = beats_start.astype(float)
+
         writer.writerow([title.decode('UTF-8'), artist_name.decode('UTF-8'), release.decode('UTF-8'),year, duration, tempo, time_signature, energy, danceability, 
                         key, loudness, mode, beats_start, end_of_fade_in, start_of_fade_out, bars_start, sections_start, segments_loudness_max, segments_loudness_max,
                         segments_loudness_max_time, segments_loudness_start, segments_pitches, segments_start, segments_timbre, artist_terms,
                         similar_artists, location.decode('UTF-8')])
-        print("wrote")
+        print(i)
         h5.close()
