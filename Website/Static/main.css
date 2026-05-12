@@ -32,40 +32,120 @@ body {
   background-color: #2700D4;
   margin-top: -2%;
   margin-bottom: 3%;
-
-
   
 }
 
 .grid-container{
   display: grid;
-  grid-template-columns: 4fr 5fr 5fr;
+  grid-template-columns: 4fr 5fr 5fr; /* 4:5:5 ratio */
   grid-template-rows: 2;
   height: 88%;
-  gap: 24px
+  gap: 1%
 }
+
 
 
 .nav-box{ /* 528px / ratio of 4: */
   width:100%;
   height:100%;
-  background-color: grey;
+  background-color: darkred;
   border-radius: 3vmin;
+
 }
 
+/* navigation box content */
+
+.nav-grid{
+  width: 90%;
+  height: 90%;
+  display: grid;
+  grid-template-columns: 1fr; /* 4:5:5 ratio */
+  padding: 3%;
+  row-gap: 0%;
+  justify-self: center;
+
+}
+
+.userIcon {
+    width: 30px;
+    height: 30px;
+    margin: 0px;
+    justify-self: center;
+}
+
+.button{
+  width: 2em;
+  height: 2em;
+  background-color: grey;
+  justify-self: center;
+}
+
+
+
+
+/* navigation box content END */
+
+
+
+
+
+
+
+
+
+
+
+
+/* playlist box content */
 .playlist-box{ /* 660px / ratio of 5: */
   width:100%;
   height:100%;
-  background-color: grey;
+  background-color: darkgreen;
   border-radius: 3vmin;
 }
+
+
+/* playlist box content END*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* chat box content */
 
 .chat-box{ /* 660px/ ratio of 5: */
   width:100%;
   height:100%;
-  background-color: grey;
+  background-color: darkblue;
   border-radius: 3vmin;
 }
+
+
+
+/* chat box content END*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 h1 {
