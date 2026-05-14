@@ -8,21 +8,20 @@ body{
     background-size: cover, 128px, 128px;
     background-repeat: no-repeat, repeat;
     mix-blend-mode:auto;
-    z-index: -1;
-    
-
+    z-index: -1;   
 }
 
 html{
   scroll-behavior: smooth;
-  width: 100vw;
-  height: 100vh;
+  scrollbar-color: #333 #111;
+  min-height: 100dvh;
 }
 
+
 body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
+  min-height:100vmin;
+  height: 100%;
+  margin: 0;
 }
 
 
@@ -38,49 +37,72 @@ body {
 .grid-container{
   display: grid;
   grid-template-columns: 4fr 5fr 5fr; /* 4:5:5 ratio */
-  grid-template-rows: 2;
-  height: 88%;
-  gap: 1%
+  height: 83%;
+  width: 97%;
+  gap: 1%;
+  padding: 1%;
 }
 
 
 
 .nav-box{ /* 528px / ratio of 4: */
   width:100%;
+  min-width: 212px;
   height:100%;
-  background-color: darkred;
+  background-image: linear-gradient(#202121, #101111);
+  border: 10px, solid, white;
   border-radius: 3vmin;
-
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* navigation box content */
 
 .nav-grid{
-  width: 90%;
+  width: 100%;
   height: 90%;
   display: grid;
   grid-template-columns: 1fr; /* 4:5:5 ratio */
+  grid-template-rows: 0fr;
   padding: 3%;
   row-gap: 0%;
   justify-self: center;
-
+  box-sizing: border-box;
 }
 
 .userIcon {
-    width: 30px;
-    height: 30px;
+    width: 200px;
+    height: 200px;
     margin: 0px;
     justify-self: center;
+    background-color: #000000;
 }
 
 .button{
-  width: 2em;
-  height: 2em;
-  background-color: grey;
   justify-self: center;
+  margin-top: 3%;
+  width: 99%;
+  height: 80%;
+  background-color: #202121; /* Grey */
+  border-radius: 3vmin;
+  text-align: center;
+  font-size: auto;
+  box-sizing: border-box;
+  
 }
 
+.button-text{
+  place-items: center;
+  display: grid;
+  width: 100%;
+  height: 100%;
 
+
+  color: white;
+  font-size: clamp(1.5vw, 1.5vw, 24px);
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+}
 
 
 /* navigation box content END */
@@ -98,12 +120,46 @@ body {
 
 /* playlist box content */
 .playlist-box{ /* 660px / ratio of 5: */
-  width:100%;
+  overflow-y: scroll;
+  width:auto;
   height:100%;
-  background-color: darkgreen;
+  max-height: 80vmin;
+  background-image: linear-gradient(#202121, #101111);
   border-radius: 3vmin;
+  display: grid;
+
+  padding-left:1%;
+  padding-right:2%;
 }
 
+.playlist-wrapper{
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 0%;
+}
+
+.playlist-item{
+  margin-top: 3%;
+  width: 99%;
+  height: 11%;
+  /*height: fit-content; */
+  background-color: #202121;
+  border-radius: 3vmin;
+  padding: 1%;
+}
+
+
+
+
+
+#playlist-grid p { /* Fonts for artist, length, genre */
+  font-size: clamp(1vw, 1vw, 24px);
+  color: lightgrey;
+}
+#playlist-grid h1 { /* Fonts for artist, length, genre */
+  font-size: clamp(2vw, 2vw, 48px);
+  color: white;
+}
 
 /* playlist box content END*/
 
@@ -130,32 +186,7 @@ body {
 }
 
 
-
 /* chat box content END*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-h1 {
-    color: lime;
-}
-p{
-  color: white;
-}
-
-
 
 
 

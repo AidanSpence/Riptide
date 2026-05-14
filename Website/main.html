@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="Static/main.css">
     <!-- the -->
     <script src="Static/main.js" defer></script>
+
+
+    <!-- Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 
 
@@ -15,32 +21,49 @@
 <body> <!-- Body start -->
 
 
-<nav class="header-bar">  <!-- Can also be used as a navigation bar later -->
+    <nav class="header-bar">  <!-- Can also be used as a navigation bar later -->
 
-</nav>
+    </nav>
 
-<div class="grid-container">
-    <div class="nav-box">
-        <div class="nav-grid">
-            <div class="userIcon" id="userIcon">
+    <div class="grid-container">
+        <div class="nav-box">
+            <div class="nav-grid">
+
+                <div class="userIcon" id="userIcon">
+
+                </div>
+
+                <div class="playlists-button button"> 
+                    <div class="button-text"> Playlists </div>  
+                </div>
+
+                <div class="info-button button"> 
+                    <div class="button-text"> Info </div> 
+                </div>
+
+                <div class="music-button button"> 
+                    <div class="button-text"> Music </div> 
+                </div>
+
+                <div class="login-button button"> 
+                    <div class="button-text"> Login </div> 
+                </div>
+
             </div>
-            <div class="playlists-button button"> </div>
-            <div class="info-button button"> </div>
-            <div class="music-button button"> </div>
-            <div class="login-button button"> </div>
-            <div class="logout-button button"> </div>
         </div>
-    </div>
+        <div class="playlist-wrapper">
+            <div class="playlist-box">
+                <div class="playlist-grid" id="playlist-grid">
+                    <!-- JS BOXES GENERATE HERE-->
+                </div>
+            </div>
+        </div>
 
-    <div class="playlist-box">
-        
-    </div>
+        <div class="chat-box">
+            
+        </div>
 
-    <div class="chat-box">
-        
-    </div>
-
-</div> <!-- End for the grid container-->
+    </div> <!-- End for the grid container-->
 
 
 </body><!-- Body END -->
