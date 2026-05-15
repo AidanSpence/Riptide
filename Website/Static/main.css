@@ -37,7 +37,8 @@ body {
 .grid-container{
   display: grid;
   grid-template-columns: 4fr 5fr 5fr; /* 4:5:5 ratio */
-  height: 83%;
+  max-height: 83%;
+  min-height: 80vmin;
   width: 97%;
   gap: 1%;
   padding: 1%;
@@ -71,8 +72,8 @@ body {
 }
 
 .userIcon {
-    width: 200px;
-    height: 200px;
+    width: 30vmin;
+    height: 30vmin;
     margin: 0px;
     justify-self: center;
     background-color: #000000;
@@ -130,6 +131,8 @@ body {
 
   padding-left:1%;
   padding-right:2%;
+  padding-bottom:1%;
+  padding-top: 1%;
 }
 
 .playlist-wrapper{
@@ -143,7 +146,7 @@ body {
   margin-top: 3%;
   width: 99%;
   height: fit-content; 
-  background-color: #202121;
+  background-color: #202121; 
   border-radius: 3vmin;
   padding: 1%;
 }
@@ -154,21 +157,37 @@ body {
 
 .dropdownArrow{
   display: grid;
-  width: 10%;
-  height: 10%;
+  width: 3vmin;
+  height: 3vmin;
+  background-color: #101111;
+  border-radius: 3vmin;
   justify-self: right;
-  grid-row: 2;
+  grid-row: 1;
+  align-self: center;
 }
 
-#playlist-grid p { /* Font for length */
+
+
+
+#playlist-grid p { /* Font for playlist small text */
   font-size: clamp(1vw, 1vw, 24px);
   color: lightgrey;
   margin: 1%;
+  grid-row:1;
+  justify-self: auto;
+  align-self: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
-#playlist-grid h3 { /* Fonts for title */
-  font-size: clamp(2vw, 2vw, 48px);
+#playlist-grid h3 { /* Fonts for playlist title text */
+  font-size: clamp(1.5vw, 1.5vw, 48px);
   color: white;
   margin: 1%;
+  grid-row:1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 /* playlist box content END*/
@@ -217,4 +236,3 @@ body {
 
 
 
-  

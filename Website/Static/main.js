@@ -3,11 +3,10 @@
 
 
 const playlist = [
-
 {
     title: "Playlist A",
     duration: "12H 32M",
-},
+}, 
 {
     title: "Playlist B",
     duration: "8H 14M",
@@ -39,6 +38,74 @@ const playlist = [
 {
     title: "Playlist I",
     duration: "13H 07M",
+},
+{
+    title: "Playlist J",
+    duration: "6H 31M",
+},
+{
+    title: "Playlist K",
+    duration: "15H 49M",
+},
+{
+    title: "Playlist L",
+    duration: "10H 12M",
+},
+{
+    title: "Playlist M",
+    duration: "3H 56M",
+},
+{
+    title: "Playlist N",
+    duration: "14H 28M",
+},
+{
+    title: "Playlist O",
+    duration: "2H 44M",
+},
+{
+    title: "Playlist P",
+    duration: "18H 11M",
+},
+{
+    title: "Playlist Q",
+    duration: "5H 09M",
+},
+{
+    title: "Playlist R",
+    duration: "12H 50M",
+},
+{
+    title: "Playlist S",
+    duration: "9H 37M",
+},
+{
+    title: "Playlist T",
+    duration: "7H 15M",
+},
+{
+    title: "Playlist U",
+    duration: "6H 53M",
+},
+{
+    title: "Playlist V",
+    duration: "17H 26M",
+},
+{
+    title: "Playlist W",
+    duration: "8H 41M",
+},
+{
+    title: "Playlist X",
+    duration: "4H 18M",
+},
+{
+    title: "Playlist Y",
+    duration: "13H 55M",
+},
+{
+    title: "Playlist Z",
+    duration: "11H 04M",
 },
     
 ];
