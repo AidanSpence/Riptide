@@ -50,7 +50,7 @@ body {
   min-width: 212px;
   height:100%;
   background-image: linear-gradient(#202121, #101111);
-  border: 10px, solid, white;
+  border: 1px, groove, rgba(255, 255, 255, 0.1);
   border-radius: 3vmin;
   box-sizing: border-box;
   overflow: hidden;
@@ -139,26 +139,36 @@ body {
 }
 
 .playlist-item{
+  display: grid;
   margin-top: 3%;
   width: 99%;
-  height: 11%;
-  /*height: fit-content; */
+  height: fit-content; 
   background-color: #202121;
   border-radius: 3vmin;
   padding: 1%;
 }
 
 
+/*   justify-self: center;
+  align-self: center;*/
 
+.dropdownArrow{
+  display: grid;
+  width: 10%;
+  height: 10%;
+  justify-self: right;
+  grid-row: 2;
+}
 
-
-#playlist-grid p { /* Fonts for artist, length, genre */
+#playlist-grid p { /* Font for length */
   font-size: clamp(1vw, 1vw, 24px);
   color: lightgrey;
+  margin: 1%;
 }
-#playlist-grid h1 { /* Fonts for artist, length, genre */
+#playlist-grid h3 { /* Fonts for title */
   font-size: clamp(2vw, 2vw, 48px);
   color: white;
+  margin: 1%;
 }
 
 /* playlist box content END*/

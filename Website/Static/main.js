@@ -1,94 +1,129 @@
-function icon_create(){
+
+
+
+
+const playlist = [
+
+{
+    title: "Playlist A",
+    duration: "12H 32M",
+},
+{
+    title: "Playlist B",
+    duration: "8H 14M",
+},
+{
+    title: "Playlist C",
+    duration: "5H 47M",
+},
+{
+    title: "Playlist D",
+    duration: "16H 03M",
+},
+{
+    title: "Playlist E",
+    duration: "9H 25M",
+},
+{
+    title: "Playlist F",
+    duration: "7H 58M",
+},
+{
+    title: "Playlist G",
+    duration: "11H 19M",
+},
+{
+    title: "Playlist H",
+    duration: "4H 42M",
+},
+{
+    title: "Playlist I",
+    duration: "13H 07M",
+},
+    
+];
+
+const userIconPath = "assets/userIcon.svg"
+
+const menuUpPath = "assets/arrowUp.svg"
+
+const menuDownPath = "assets/arrowDown.svg"
+
+
+
+
+
+
+
+
+
+
+
+
+
+function iconCreate(){
     const userIcon = document.createElement("img");
-    userIcon.src = "assets/userIcon.svg";
+    userIcon.src = userIconPath;
     userIcon.alt = "User icon";
     userIcon.style.width = '100%'
     userIcon.style.height = '100%'
     document.getElementById("userIcon").appendChild(userIcon);
 }
 
-const songs = [
-    {
-        title: "Song A",
-        artist: "Artist 1",
-        duration: "3:24",
-        genre: "Rock"
-    },
-    {
-        title: "Song B",
-        artist: "Artist 2",
-        duration: "4:10",
-        genre: "Pop"
-    },
-    {
-        title: "Song C",
-        artist: "Artist 3",
-        duration: "2:58",
-        genre: "Electronic"
-    },
-    {
-        title: "Song D",
-        artist: "Artist 4",
-        duration: "5:01",
-        genre: "Jazz"
-    },
-    {
-    title: "Song E",
-    artist: "Artist 5",
-    duration: "3:42",
-    genre: "Rock"
-    },
-    {
-        title: "Song F",
-        artist: "Artist 6",
-        duration: "4:18",
-        genre: "Pop"
-    },
-    {
-        title: "Song G",
-        artist: "Artist 7",
-        duration: "2:55",
-        genre: "Hip Hop"
-    },
-    {
-        title: "Song H",
-        artist: "Artist 8",
-        duration: "6:03",
-        genre: "Electronic"
-    }
-];
-
-async function loadSongs() {
+function dropdownCreate(ID){
+    const dropdown = document.createElement("img");
+    dropdown.src = menuDownPath;
+    dropdown.alt = "Dropdown menu";
+    dropdown.className = "dropdownArrow"
+    document.getElementById(ID).appendChild(dropdown);
+}
 
 
 
-    const response = songs;
 
-    //const response = await fetch("http://127.0.0.1:5000/songs");  // local flask testing (flask ip)      
+
+
+
+async function loadPlaylists() {
+
+
+
+    const response = playlist;
+
+    //const response = await fetch("http://127.0.0.1:5000/Playlists");  // local flask testing (flask ip)      
     
     // const response = await fetch("999.999.99.99");  // AWS backend testing (add flask ip)
 
     const container = document.getElementById("playlist-grid");
 
-    songs.forEach(song => {
+    let idloop = 0;
 
+    playlist.forEach(playlist => {
+        let temphtml = "";
         const box = document.createElement("div");
-
+        idloop += 1;
         box.className = "playlist-item";
+        box.id = 'box_' + idloop;
 
-        box.innerHTML = `
-            <h1>${song.title}</h1>
-            <p>${song.artist}</p>
-            <p>${song.duration}</p>
-            <p>${song.genre}</p>
-        `;
+
+        if (playlist.title) {
+            temphtml += `<h3>${playlist.title}</h3>`;
+        }
+
+        if (playlist.duration) {
+            temphtml += `<p>Duration: ${playlist.duration}</p>`;
+        }
+        
+        temphtml += '<img'
+
+        box.innerHTML = temphtml
 
         container.appendChild(box);
-
+        dropdownCreate('box_' + idloop)
     });
 
 }
 
-loadSongs();
+loadPlaylists();
 
-icon_create()
+iconCreate()
