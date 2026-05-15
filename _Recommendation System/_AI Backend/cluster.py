@@ -59,4 +59,4 @@ df['cluster'] = kmeans.labels_
 joblib.dump(scaler, "_Recommendation System/models/scaler.jb")
 joblib.dump(kmeans, "_Recommendation System/models/kmeans.jb")
 joblib.dump(final_df_scaled, "_Recommendation System/models/final_df_scaled.jb")
-
+joblib.dump(df, "_Recommendation System/models/df.jb")
