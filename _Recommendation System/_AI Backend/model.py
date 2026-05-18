@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-# load necessary variables
+# Load necessary variables
 final_df_scaled = joblib.load("_Recommendation System/models/final_df_scaled.jb")
 df = joblib.load("_Recommendation System/models/df.jb")
 x_tensor = torch.tensor(final_df_scaled, dtype=torch.float32)
