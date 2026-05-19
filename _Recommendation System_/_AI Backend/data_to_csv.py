@@ -5,7 +5,7 @@ import numpy as np
 
 i = 0
 
-base = Path(r'..\Riptide\millionsongsubset')
+base = Path(r'D:\Users\270385733\OneDrive - UP Education\Desktop\millionsongsubset')
 files = list(base.rglob("*.h5"))
 
 with open("output.csv", "w", encoding="utf-8", newline="") as f:

@@ -8,16 +8,13 @@ import joblib
 # constants
 TEXT_COLUMNS = ["title","artist_name","release","artist_terms","similar_artists","location"]
 
-
 # variables
 vectorizer = TfidfVectorizer()
 
-
 # datasets
-df = pd.read_csv("1049_output.csv")
+df = pd.read_csv("output.csv")
 word_df = df.copy()
 dfs = {}
-
 
 # Vectorize the text columns
 def to_vectorize(location):
@@ -45,18 +42,23 @@ final_df = pd.concat([df] + list(dfs.values()), axis=1)
 scaler = StandardScaler()
 final_df_scaled = scaler.fit_transform(final_df)
 
+print("scaled")
+
 # Cluster the songs using KMeans
 kmeans = KMeans(
     n_clusters=20,
     random_state=42
 )
 
+print("kmeans")
+
 kmeans.fit(final_df_scaled)
 df['cluster'] = kmeans.labels_
 
+print("fit")
 
 # Save the models and data
-joblib.dump(scaler, "_Recommendation System/models/scaler.jb")
-joblib.dump(kmeans, "_Recommendation System/models/kmeans.jb")
-joblib.dump(final_df_scaled, "_Recommendation System/models/final_df_scaled.jb")
-joblib.dump(df, "_Recommendation System/models/df.jb")
+joblib.dump(scaler, "_Recommendation System_/models/scaler.jb")
+joblib.dump(kmeans, "_Recommendation System_/models/kmeans.jb")
+joblib.dump(final_df_scaled, "_Recommendation System_/models/final_df_scaled.jb")
+joblib.dump(df, "_Recommendation System_/models/df.jb")

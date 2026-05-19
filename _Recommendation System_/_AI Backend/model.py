@@ -6,8 +6,8 @@ import torch.nn.functional as F
 import numpy as np
 
 # Load necessary variables
-final_df_scaled = joblib.load("_Recommendation System/models/final_df_scaled.jb")
-df = joblib.load("_Recommendation System/models/df.jb")
+final_df_scaled = joblib.load("_Recommendation System_/models/final_df_scaled.jb")
+df = joblib.load("_Recommendation System_/models/df.jb")
 x_tensor = torch.tensor(final_df_scaled, dtype=torch.float32)
 loss_fn = nn.CrossEntropyLoss()
 criterion = nn.TripletMarginLoss(margin=1.0)
