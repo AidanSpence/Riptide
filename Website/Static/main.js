@@ -162,7 +162,7 @@ async function loadPlaylists() {
 
     const response = playlist;
 
-    //const response = await fetch("http://127.0.0.1:5000/Playlists");  // local flask testing (flask ip)      
+    // const response = await fetch("http://127.0.0.1:5000/Playlists");  // local flask testing (flask ip)      
     
     // const response = await fetch("999.999.99.99");  // AWS backend testing (add flask ip)
 
