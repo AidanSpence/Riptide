@@ -151,8 +151,18 @@ function chatItemCreate(ID){ // ID == Chatbox ID
     document.getElementById(ID).appendChild(chatItem);
 }
 
+async function fetchFlask() {
+    try {
+        const response = await fetch('http://localhost:5000/api/chat');
+        const data = await response.json();
 
-
+        console.log(data.chatbot_txt);
+        return data.chatbot_txt
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+    
+}   
 
 
 
@@ -230,47 +240,31 @@ async function loadchat(text, id){
 
 
 
-loadchat(`Hey! Can you make me a chill playlist for late-night coding sessions? I want a mix of lo-fi, indie, ambient, and a few upbeat tracks so I don't fall asleep`, 1)
-
-loadchat(`Absolutely — I made you a late-night coding playlist with a smooth flow from calm focus tracks into slightly more energetic songs for when you hit the 2AM productivity boost.
-
-🎧 Late Night Coding Sessions
-
-1. Snowfall — Øneheart & reidenshi  
-2. Sunset Lover — Petit Biscuit  
-3. Space Song — Beach House  
-4. Glue — Bicep  
-5. Ivy — Frank Ocean  
-6. Night Trouble — Petit Biscuit  
-7. Awake — Tycho  
-8. Intro — The xx  
-9. After Dark — Mr.Kitty  
-10. Electric Feel — MGMT  
-11. Midnight City — M83  
-12. Borderline — Tame Impala  
-13. A Moment Apart — ODESZA  
-14. Apocalypse — Cigarettes After Sex  
-15. Home — Resonance  
-16. Feel It All Around — Washed Out  
-17. Runaway — AURORA  
-18. Everything in Its Right Place — Radiohead  
-19. Holocene — Bon Iver  
-20. Dreams — Fleetwood Mac
-
-⏱ Total Duration: 1H 47M
-
-I also balanced the playlist so it starts soft, builds energy in the middle, and winds down again near the end.
-
-Want me to make:
-• a heavier synthwave version  
-• a pure lo-fi version  
-• a Spotify-style "Discover Weekly" mix  
-• or a gym/workout playlist instead?`, 0)
-
-
-
-
-
-loadPlaylists();
-
-iconCreate()
+async function init() {
+    loadPlaylists();
+    iconCreate();
+}
+async function chatRefresh() {
+    loadchat(await fetchFlask(), 0);
+}
+init();
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()
+chatRefresh()

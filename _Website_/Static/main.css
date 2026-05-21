@@ -190,6 +190,7 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-family: 'Inter', sans-serif;
 }
 #playlist-grid h3 { /* Fonts for playlist title text */
   font-size: clamp(1.5vw, 1.5vw, 48px);
@@ -199,6 +200,8 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  font-weight: normal;
 }
 
 /* playlist box content END*/
