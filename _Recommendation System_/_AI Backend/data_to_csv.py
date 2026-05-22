@@ -5,7 +5,7 @@ import numpy as np
 
 i = 0
 
-base = Path(r'..\Riptide\millionsongsubset')
+base = Path(r'C:\Users\Aidan Spence\Documents\GitHub\Riptide\MillionSongSubset') # Change this to the location of the Million Song Subset on your computer
 files = list(base.rglob("*.h5"))
 
 with open("output.csv", "w", encoding="utf-8", newline="") as f:
