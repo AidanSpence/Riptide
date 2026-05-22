@@ -1,17 +1,34 @@
 import joblib
 import random
 import torch
+from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-# Load necessary variables
-final_df_scaled = joblib.load("_Recommendation System/models/final_df_scaled.jb")
-df = joblib.load("_Recommendation System/models/df.jb")
-x_tensor = torch.tensor(final_df_scaled, dtype=torch.float32)
-loss_fn = nn.CrossEntropyLoss()
-criterion = nn.TripletMarginLoss(margin=1.0)
+# Load necessary variables and check device
+print("PyTorch version:", torch.__version__)
+print("CUDA available:", torch.cuda.is_available())
+print("Number of GPUs:", torch.cuda.device_count())
+if torch.cuda.is_available():
+    print("GPU Name:", torch.cuda.get_device_name(0))
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+final_df_scaled = joblib.load("_Recommendation System_/models/final_df_scaled.jb")
+
+df = joblib.load("_Recommendation System_/models/df.jb")
+
+x_tensor = torch.tensor(final_df_scaled, dtype=torch.float32).to(device)
+
+criterion = nn.TripletMarginLoss(margin=1.0)
+
+print(device)
+print("Shape:", final_df_scaled.shape)
+print("Min:", np.min(final_df_scaled))
+print("Max:", np.max(final_df_scaled))
+print("Mean:", np.mean(final_df_scaled))
+print("Std:", np.std(final_df_scaled))
 
 # Model Class
 class TripletNet(nn.Module):
@@ -19,11 +36,11 @@ class TripletNet(nn.Module):
     def __init__(self, input_dim):
         super(TripletNet, self).__init__()
         self.stack = nn.Sequential(
-            nn.Linear(input_dim, 512),
+            nn.Linear(input_dim, 1024),
             nn.ReLU(),
-            nn.Linear(512, 512),
+            nn.Linear(1024, 1024),
             nn.ReLU(),
-            nn.Linear(512, 128))
+            nn.Linear(1024, 128))
 
     def forward(self, x):
         return self.stack(x)
@@ -55,11 +72,12 @@ def create_triplets(X, labels):
 # Load Model and create triplets
 model = TripletNet(final_df_scaled.shape[1]).to(device)
 triplets = create_triplets(final_df_scaled, df['cluster'].values)
-
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 best_epoch = float('inf')
-epochs = 1000
+epochs = 100
 
+# Training Loop
 for epoch in range(epochs):
 
     model.train()
@@ -67,15 +85,17 @@ for epoch in range(epochs):
     triplet_count = 0
 
     for anchor, positive, negative in triplets:
-        anchor_out = model(x_tensor[anchor])
-        positive_out = model(x_tensor[positive])
-        negative_out = model(x_tensor[negative])
+        anchor_out = model(x_tensor[anchor].unsqueeze(0))
+        positive_out = model(x_tensor[positive].unsqueeze(0))
+        negative_out = model(x_tensor[negative].unsqueeze(0))
 
-        loss = (0.5 * loss_fn(anchor_out, negative_out)) + (0.5 * criterion(anchor_out, positive_out, negative_out))
+        loss = criterion(anchor_out, positive_out, negative_out)
+        optimizer.zero_grad()
         loss.backward()
+        optimizer.step()
 
 
-        running_loss = loss.item()
+        running_loss += loss.item()
         triplet_count += 1
 
     epoch_loss_train = running_loss/triplet_count
@@ -84,15 +104,17 @@ for epoch in range(epochs):
     running_loss = 0.0
     triplet_count = 0
 
+    # Validation Loop
     with torch.no_grad():
         for anchor, positive, negative in triplets:
-            anchor_out = model(x_tensor[anchor])
-            positive_out = model(x_tensor[positive])
-            negative_out = model(x_tensor[negative])
+            anchor_out = model(x_tensor[anchor].unsqueeze(0))
+            positive_out = model(x_tensor[positive].unsqueeze(0))
+            negative_out = model(x_tensor[negative].unsqueeze(0))
 
-            loss = (0.5 * loss_fn(anchor_out, negative_out)) + (0.5 * criterion(anchor_out, positive_out, negative_out))
+            loss = criterion(anchor_out, positive_out, negative_out)
 
-            running_loss = loss.item()
+            running_loss += loss.item()
+
             triplet_count += 1
 
         epoch_loss_val = running_loss/triplet_count
@@ -103,4 +125,9 @@ for epoch in range(epochs):
 
     if epoch_loss_val < best_epoch:
         best_epoch = epoch_loss_val
-        torch.save(model.state_dict(), "_Recommendation System/models/model.mo")
+        torch.save(model.state_dict(), "_Recommendation System_/models/model.mo")
+    else:
+        not_improved = epoch - best_epoch
+        if not_improved >= 10:
+            print("Early stopping triggered")
+            break

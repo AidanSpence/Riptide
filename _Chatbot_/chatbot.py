@@ -1,63 +1,92 @@
 import random
 import re
 
+import sys, os
+sys.path.insert(0, os.path.abspath(r'..\_Recommendation System_\_AI Frontend'))
+
+import recommender
 
 class Chatbot():
     def __init__(self):
-        self.talk = {
-            'help': r'help',
-            'recommend': r'create|make|playlist',
-            'improve': r'improve|better',
-            'new_song': r'new song|song'
-            #album finder
+        self.intent = {
+            'help': r'help|assist|support|how (do|to)|what can you do|commands|options',
+            'recommend': r'recommend|suggest|find|give me|make|create|build',
+            'improve': r'improve|better|refine|adjust|tune',
         }
+        self.goal = {
+            'playlist': r'playlist|new playlist',
+            'new_song': r'new song|song| something new',
+        }
+        self.moods = (r'happy|sad|chill|relax|energetic|party|focus')
+        self.genres = (r'rock|pop|rap|hip hop|jazz|edm|classical')
 
     def start(self):
         print("Welcome To Riptide.")
         self.chat()
 
-    def reply(self, message):
-        for key,value in self.talk.items():
+    def detect_intent(self, message):
+        for key,value in self.intent.items():
             intent = key
             pattern = value
-            found_match = re.match(pattern, message)
-
-            if found_match and intent =='recommend':
-                return self.recommend()
-            elif found_match and intent =='help':
+            found_match = re.search(pattern, message)
+            if found_match and intent =='help':
                 return self.help()
-            elif found_match and intent =='new_song':
-                return self.new_song()
-            # elif found_match and intent =='':
-            #     return self.()
+            elif found_match and intent =='recommend':
+                return self.recommend(message)
+            #elif found_match and intent =='improve':
+                #return self.improve()
         return self.confused()
+    
+    def detect_goal(self, message):
+        for key,value in self.goal.items():
+            goal = key
+            pattern = value
+            found_match = re.search(pattern, message)
+            if found_match and goal =='playlist':
+                return 0
+            elif found_match and goal =='new_song':
+                return 1
+            
+    def detect_mood(self, message):
+        mood = re.search(self.moods, message)
+        return mood
+
+    def detect_genre(self, message):
+        genre = re.search(self.genres, message)
+        return genre
 
     def chat(self):
         message = input().lower()
-        self.reply(message)
+        self.detect_intent(message)
 
     def help(self):
         response = "Ask me to 'Create a _____ playlist'" # MAKE A BETTER VERSION OF THIS
         print(response)
         self.chat()
 
-    def recommend(self):
-        responses = ("Working on it", "Nah")
+    def recommend(self, message):
+        goal = self.detect_goal(message)
+        print(goal)
+        mood = self.detect_mood(message)
+        if mood != None:
+            print(mood.group(0))
+        genre = self.detect_genre(message)
+        if genre != None:
+            print(genre.group(0))
+        filters = [goal, mood, genre]
+        dialog_manager(message, filters)
         # add some way to talk to recommender system while sending message through
-        print(random.choice(responses))
-        self.chat()
-
-    def new_song(self):
-        pass # recommend system makes new song
-        print('song')
         self.chat()
 
     def confused(self):
-        response = "Try do this..." # MAKE A BETTER VERSION OF THIS
+        response = "Sorry I don't understand, Type 'Help' for more options."
         print(response)
         self.chat()
 
-
+def dialog_manager(message, filters):
+    pass
+    recommendation = recomender.recommend
+    return recommendation
 
 bot = Chatbot()
 bot.start()
