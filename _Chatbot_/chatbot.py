@@ -1,10 +1,10 @@
 import random
 import re
 
-import sys
-sys.path.insert('..\_Recommendation System_')
+import sys, os
+sys.path.insert(0, os.path.abspath(r'..\_Recommendation System_\_AI Frontend'))
 
-from _Ai Frontend
+import recommender
 
 class Chatbot():
     def __init__(self):
