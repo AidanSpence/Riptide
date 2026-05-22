@@ -143,6 +143,7 @@ body {
   padding-right:2%;
   padding-bottom:1%;
   padding-top: 1%;
+  scrollbar-color: var(--main-color) transparent;
 }
 
 .playlist-wrapper{
@@ -189,6 +190,7 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-family: 'Inter', sans-serif;
 }
 #playlist-grid h3 { /* Fonts for playlist title text */
   font-size: clamp(1.5vw, 1.5vw, 48px);
@@ -198,6 +200,8 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  font-weight: normal;
 }
 
 /* playlist box content END*/
@@ -212,7 +216,7 @@ body {
 .chatbox{ /* 660px/ ratio of 5: */
   display: flex;
   flex-direction: column;
-  overflow-y:auto;
+  overflow-y:hidden;
   width:100%;
   height:100%;
   background-image: linear-gradient(var(--secondary-color), #101111);
@@ -223,38 +227,56 @@ body {
 
 .chatbox-window{
   display: grid;
-  grid-template-rows: min-content;
+  row-gap: 0;
   margin-top: 1%;
   border-radius: 3vmin;
   height: 88%;
   width: 98%;
   background-image: linear-gradient(var(--secondary-color), var(--main-color)); /* This will be transperent, but to show text borders using this for now */
-  overflow:scroll;
+  overflow-y:scroll;
+  overflow-x:hidden;
   max-height: 80vmin;
   white-space: pre-line;
 }
 
 .chat-item{
+  width: fit-content;
+  height: fit-content;
   color: white;
-  padding: 0%;
-  margin: 0%;
   background-image: linear-gradient(var(--secondary-color) 10%, var(--main-color) );
   border: 1px, groove, grey;
   border-radius: 3vmin;
   margin: 1%;
   padding: 1%;
-
 }
 
 
 .chatbox-input-box{
-  width: 90%;
+  padding-left: 1%;
+  padding-right: 1%;
+  width: 95%;
   border-radius: 3vmin;
   height: 10%;
   margin-bottom: 1%;
   margin-top: 1%;
   background-color: var(--secondary-color);
   border-radius: 3vmin;
+}
+
+.chatbox-input{
+  display: flex;
+  align-self:center;
+  justify-self: center;
+  width: 95%;
+  height: 85%;
+  padding: 1%;
+  /* border-radius: 3vmin; */
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  resize: none;
+  scrollbar-color: var(--main-color) transparent;
 }
 
 
