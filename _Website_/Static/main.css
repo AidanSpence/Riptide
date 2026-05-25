@@ -183,12 +183,12 @@ body {
 #playlist-grid p { /* Font for playlist small text */
   font-size: clamp(1vw, 1vw, 24px);
   color: lightgrey;
-  margin: 1%;
+  margin: 5%;
   grid-row:1;
   justify-self: auto;
-  align-self: center;
+  align-self: end;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  text-overflow: auto;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
 }
@@ -226,7 +226,8 @@ body {
 
 
 .chatbox-window{
-  display: grid;
+  display: flex;
+  flex-direction: column;
   row-gap: 0;
   margin-top: 1%;
   border-radius: 3vmin;

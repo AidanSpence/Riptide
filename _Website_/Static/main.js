@@ -1,13 +1,8 @@
 
 
+const playlist = []
 
 
-const playlist = [
-{
-    title: "No playlists loaded",
-    duration: "N/a",
-},     
-];
 
 const userIconPath = "assets/userIcon.svg"
 
@@ -43,6 +38,11 @@ function dropdownCreate(ID){
     dropdown.className = "dropdownArrow"
     document.getElementById(ID).appendChild(dropdown);
 }
+
+
+
+
+
 function chatItemCreate(ID){ // ID == Chatbox ID
     const chatItem = document.createElement("p");
     chatItem.src = menuDownPath;
@@ -50,11 +50,11 @@ function chatItemCreate(ID){ // ID == Chatbox ID
     document.getElementById(ID).appendChild(chatItem);
 }
 
-async function fetchFlask() {
+async function chatFetchFlask() {
     try {
         const response = await fetch('http://localhost:5000/api/chat');
         const data = await response.json();
-
+        console.log("Chatbot Flask");
         console.log(data.chatbot_txt);
         return data.chatbot_txt
     } catch (error) {
@@ -64,28 +64,51 @@ async function fetchFlask() {
 }   
 
 
+async function playlistFetchFlask() {
+    try {
+        const response = await fetch('http://localhost:5000/api/playlist');
+        const data = await response.json();
+
+        console.log("Playlist Flask");
+        console.log(data);
+
+        return data.playlist_data
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [
+            { 
+                title: "No playlists loaded",
+                duration: "N/a",
+            }
+        ];
+    }
+}
+
+
+
+
+
 
 async function loadPlaylists() {
 
-
-
-    const response = playlist;
-
-    // const response = await fetch("http://127.0.0.1:5000/Playlists");  // local flask testing (flask ip)      
-    
-    // const response = await fetch("999.999.99.99");  // AWS backend testing (add flask ip)
-
     const playlistContainer = document.getElementById("playlist-grid");
 
+    playlistContainer.innerHTML = "";
+    
+    const playlists = await playlistFetchFlask();
+    
     let idloop = 0;
-
-    playlist.forEach(playlist => {
+    
+    playlists.forEach(
+        playlist => 
+    {
         let temphtml = "";
         const box = document.createElement("div");
+
         idloop += 1;
         box.className = "playlist-item";
         box.id = 'box_' + idloop;
-
 
         if (playlist.title) {
             temphtml += `<h3>${playlist.title}</h3>`;
@@ -94,15 +117,15 @@ async function loadPlaylists() {
         if (playlist.duration) {
             temphtml += `<p>Duration: ${playlist.duration}</p>`;
         }
-        
-        temphtml += '<img'
 
-        box.innerHTML = temphtml
+        //temphtml += `<img src="default.jpg" alt="Playlist cover">`;
+
+        box.innerHTML = temphtml;
 
         playlistContainer.appendChild(box);
-        dropdownCreate('box_' + idloop)
-    });
 
+        dropdownCreate('box_' + idloop);
+    });
 }
 
 async function loadchat(text, id){
@@ -119,11 +142,11 @@ async function loadchat(text, id){
 
 
     if (id == '0') { // left
-        chatItem.style.textAlign = 'start'
+        chatItem.style.alignSelf = 'start'
         chatItem.style.marginRight = '5%'
     }
     if (id == '1') { // right
-        chatItem.style.textAlign = 'end'
+        chatItem.style.alignSelf = 'end'
         chatItem.style.marginLeft = '5%'
     }
     chatItem.innerHTML = chathtml;
@@ -140,13 +163,21 @@ async function loadchat(text, id){
 
 
 async function init() {
-    loadPlaylists();
     iconCreate();
 }
 async function chatRefresh() {
-    loadchat(await fetchFlask(), 0);
+    loadchat(await chatFetchFlask() ?? ["Error backend"], 0);
+    loadchat(await chatFetchFlask() ?? ["Error backend"], 1);
+    loadchat(await chatFetchFlask() ?? ["Error backend"], 0);
+    loadchat(await chatFetchFlask() ?? ["Error backend"], 1);
+    loadchat(await chatFetchFlask() ?? ["Error backend"], 0);
+    loadchat(await chatFetchFlask() ?? ["Error backend"], 1);
 }
+async function playlistRefresh() {
+    loadPlaylists()
+}
+
+
 init();
 chatRefresh()
-chatRefresh()
-chatRefresh()
+playlistRefresh()
