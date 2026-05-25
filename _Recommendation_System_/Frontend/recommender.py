@@ -2,32 +2,26 @@ import torch
 import numpy as np
 import joblib
 from sklearn.metrics.pairwise import cosine_similarity
-
+from _Recommendation_System_.Backend.model import TripletNet
 
 class SongRecommender:
-    def __init__(self, model, model_path, embeddings_path, clusters_path, kmeans_path, device="cpu"):
+    def __init__(self, input_dim, device="cpu"):
         self.device = device
-        self.model = model.to(device)
-        self.model.load_state_dict(torch.load(model_path, map_location=device))
+
+        self.model = TripletNet(input_dim).to(device)
+        self.model.load_state_dict(torch.load("_Recommendation_System_/models/model.pt", map_location=device))
         self.model.eval()
 
-        self.embeddings = np.load(embeddings_path)
-        self.clusters = np.load(clusters_path)
-        self.kmeans = joblib.load(kmeans_path)
+        self.embeddings = np.load("_Recommendation_System_/models/embeddings.npy")
+        self.df = joblib.load("_Recommendation_System_/models/df.joblib")
 
-    def recommend(self, query_tensor, k=10):
+    def recommend(self, query_vector, k=10):
         with torch.no_grad():
-            query_emb = self.model(query_tensor.to(self.device)).cpu().numpy()
-
-        # cluster assignment
-        cluster_id = self.kmeans.predict(query_emb.reshape(1, -1))[0]
-
-        # filter candidates
-        candidate_idx = np.where(self.clusters == cluster_id)[0]
-        candidate_emb = self.embeddings[candidate_idx]
+            q = torch.tensor(query_vector, dtype=torch.float32).unsqueeze(0)
+            query_emb = self.model(q.to(self.device)).cpu().numpy()
 
         # similarity ranking
-        scores = cosine_similarity(query_emb, candidate_emb)[0]
-        top_k = candidate_idx[np.argsort(scores)[::-1][:k]]
+        scores = cosine_similarity(query_emb, self.embeddings)[0]
+        top_k = np.argsort(scores)[::-1][:k]
 
-        return top_k
+        return self.df.iloc[top_k]

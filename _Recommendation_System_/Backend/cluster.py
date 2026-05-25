@@ -1,69 +1,65 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.decomposition import TruncatedSVD
 import pandas as pd
 import numpy as np
 import joblib
 
 # constants
 TEXT_COLUMNS = ["title","artist_name","release","artist_terms","similar_artists","location"]
-SAVE_DIR  = "_Recommendation_System_\models"
+SAVE_DIR  = "_Recommendation_System_\\models"
 
-# variables
-vectorizer = TfidfVectorizer()
 
-# datasets
+def build_features(df: pd.DataFrame): # Forces pandas dataframe as input
+    """Function for building features from the original dataset"""
+    # Vectorize the text columns
+    vectorizer = TfidfVectorizer(max_features=20000)
+    
+    dfs = {}
 
-word_df = df.copy()
-dfs = {}
+    for column in TEXT_COLUMNS:
+        print(f"Vectorizing {column}")
+        data = df[column].fillna("").astype(str)
+        vector = vectorizer.fit_transform(data)
 
-# Vectorize the text columns
-def to_vectorize(location):
-    data = df[location].fillna("").astype(str)
-    x = vectorizer.fit_transform(data)
-    return x
+        dfs[column] = pd.DataFrame(vector.toarray(), columns=vectorizer.get_feature_names_out())
 
-# Convert the vectorized data to DataFrames
-def vector_to_df(vector):
-    return pd.DataFrame(vector.toarray(), columns=vectorizer.get_feature_names_out())
+    # Drop the original text columns from the DataFrame and save to df_num
+    df_num = df.drop(TEXT_COLUMNS, axis=1)
+    # Concatenate the original DataFrame with the vectorized DataFrames
+    final_df = pd.concat([df_num] + list(dfs.values()), axis=1)
 
-# Vectorize the text columns and convert them to DataFrames
-for column in TEXT_COLUMNS:
-    print(f"Vectorizing {column}")
-    vectorized = to_vectorize(column)
-    dfs[column] = vector_to_df(vectorized)
+    svd = TruncatedSVD(n_components=512)
+    X_reduced = svd.fit_transform(final_df)
 
-# Drop the original text columns from the DataFrame
-df = df.drop(TEXT_COLUMNS, axis=1)
+    # Scale the features
+    scaler = StandardScaler()
+    final_scaled = scaler.fit_transform(X_reduced)
 
-# Concatenate the original DataFrame with the vectorized DataFrames
-final_df = pd.concat([df] + list(dfs.values()), axis=1)
+    joblib.dump(final_scaled, f"{SAVE_DIR}/final_df_scaled.jb")
 
-# Scale the features
-scaler = StandardScaler()
-df_scaled = scaler.fit_transform(final_df)
+    return final_scaled, df
 
-print("scaled")
 
-# Cluster the songs using KMeans
-kmeans = KMeans(
-    n_clusters=20,
-    random_state=42
-)
+def cluster_data(final_scaled, df, n_clusters=20):
+    """Function for clustering the songs using KMeans"""
+    kmeans = KMeans(
+        n_clusters=n_clusters,
+        random_state=42
+    )
+    labels = kmeans.fit_predict(final_scaled)
 
-print("kmeans")
+    df['cluster'] = labels
 
-embeddings = model(torch.tensor(final_df_scaled, dtype=torch.float32)).detach().cpu().numpy()
-kmeans.fit(embeddings)
-df['cluster'] = kmeans.labels_
-
-print("fit")
-
-# Save the data
-np.savez_compressed(f"{save_dir}/clusters.npz", df['cluster'].values)
-joblib.dump(kmeans, f"{save_dir}/kmeans.jb")
-joblib.dump(df_scaled, f"{save_dir}/scaler.jb")
+    # Save the data
+    np.savez_compressed(f"{SAVE_DIR}/clusters.npz", df['cluster'].values)
+    joblib.dump(kmeans, f"{SAVE_DIR}/kmeans.jb")
+    joblib.dump(df, f"{SAVE_DIR}/df.jb")
 
 
 if __name__ == "__main__":
     df = pd.read_csv("output.csv")
+
+    scaled, df = build_features(df)
+    cluster_data(scaled, df)

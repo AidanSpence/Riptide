@@ -1,10 +1,15 @@
 import random
 import re
-import recommender
+import joblib
+
+from recommender import SongRecommender
 
 
 class Chatbot():
     def __init__(self):
+        self.X =joblib.load("_Recommendation_System_/models/final_df_scaled.jb")
+        self.recommender = SongRecommender(input_dim=self.X.shape[1], device="cpu")
+
         self.intent = {
             'help': r'help|assist|support|how (do|to)|what can you do|commands|options',
             'recommend': r'recommend|suggest|find|give me|make|create|build',
@@ -76,11 +81,11 @@ class Chatbot():
         length = self.extract_number(message)
 
         filters = [goal, mood, genre]
-        style_vec = dialog_manager(message, filters)
+        query_vector = dialog_manager(message, filters)
         if length != None:
-            recommendation = recommender.recommend(style_vec, length)
+            results = self.recommender.recommend(query_vector, k=int(length))
         else:
-            recommendation = recommender.recommend(style_vec, length)
+            results = self.recommender.recommend(query_vector, k=10)
         self.chat()
 
     def confused(self):
