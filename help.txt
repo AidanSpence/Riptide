@@ -1,3 +1,5 @@
+# recommender.py
+
 import torch
 import numpy as np
 import joblib
@@ -31,3 +33,20 @@ class SongRecommender:
         top_k = candidate_idx[np.argsort(scores)[::-1][:k]]
 
         return top_k
+
+
+
+# run_recommendation.py
+
+from recommender import SongRecommender
+
+recommender = SongRecommender(
+    model=model,
+    model_path="models/model.pt",
+    embeddings_path="models/embeddings.npy",
+    clusters_path="models/clusters.npy",
+    kmeans_path="models/kmeans.joblib",
+)
+
+results = recommender.recommend(query_tensor, k=10)
+print(results)

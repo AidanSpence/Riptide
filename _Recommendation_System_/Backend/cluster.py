@@ -1,18 +1,19 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans, SpectralClustering
+from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
+import numpy as np
 import joblib
 
 # constants
 TEXT_COLUMNS = ["title","artist_name","release","artist_terms","similar_artists","location"]
+SAVE_DIR  = "_Recommendation_System_\models"
 
 # variables
 vectorizer = TfidfVectorizer()
 
 # datasets
-df = pd.read_csv("output.csv")
+
 word_df = df.copy()
 dfs = {}
 
@@ -40,7 +41,7 @@ final_df = pd.concat([df] + list(dfs.values()), axis=1)
 
 # Scale the features
 scaler = StandardScaler()
-final_df_scaled = scaler.fit_transform(final_df)
+df_scaled = scaler.fit_transform(final_df)
 
 print("scaled")
 
@@ -52,13 +53,17 @@ kmeans = KMeans(
 
 print("kmeans")
 
-kmeans.fit(final_df_scaled)
+embeddings = model(torch.tensor(final_df_scaled, dtype=torch.float32)).detach().cpu().numpy()
+kmeans.fit(embeddings)
 df['cluster'] = kmeans.labels_
 
 print("fit")
 
-# Save the models and data
-joblib.dump(scaler, "_Recommendation System_/models/scaler.jb")
-joblib.dump(kmeans, "_Recommendation System_/models/kmeans.jb")
-joblib.dump(final_df_scaled, "_Recommendation System_/models/final_df_scaled.jb")
-joblib.dump(df, "_Recommendation System_/models/df.jb")
+# Save the data
+np.savez_compressed(f"{save_dir}/clusters.npz", df['cluster'].values)
+joblib.dump(kmeans, f"{save_dir}/kmeans.jb")
+joblib.dump(df_scaled, f"{save_dir}/scaler.jb")
+
+
+if __name__ == "__main__":
+    df = pd.read_csv("output.csv")

@@ -6,6 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
+save_dir = "_Recommendation_System_\models"
+
 # Load necessary variables and check device
 print("PyTorch version:", torch.__version__)
 print("CUDA available:", torch.cuda.is_available())
@@ -75,6 +77,7 @@ triplets = create_triplets(final_df_scaled, df['cluster'].values)
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 best_epoch = float('inf')
+patience_counter = 0
 epochs = 100
 
 # Training Loop
@@ -123,11 +126,18 @@ for epoch in range(epochs):
     print(f"  Train Loss: {epoch_loss_train:.4f}")
     print(f"  Val Loss:   {epoch_loss_val:.4f}")
 
-    if epoch_loss_val < best_epoch:
-        best_epoch = epoch_loss_val
-        torch.save(model.state_dict(), "_Recommendation System_/models/model.mo")
+    if epoch_loss_val < best_val_loss:
+        best_val_loss = epoch_loss_val
+        patience_counter = 0
+
+        with torch.no_grad():
+            embeddings = model(x_tensor)
+
+        torch.save(model.state_dict(), f"{save_dir}/model.pt")
+        np.save(f"{save_dir}/embeddings.npy", embeddings)
+
     else:
-        not_improved = epoch - best_epoch
-        if not_improved >= 10:
-            print("Early stopping triggered")
+        patience_counter += 1
+        if patience_counter >= 10:
+            print("Early stop")
             break

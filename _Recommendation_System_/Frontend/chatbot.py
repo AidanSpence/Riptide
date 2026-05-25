@@ -1,10 +1,7 @@
 import random
 import re
-
-import sys, os
-sys.path.insert(0, os.path.abspath(r'..\_Recommendation_System_\Frontend'))
-
 import recommender
+
 
 class Chatbot():
     def __init__(self):
@@ -19,6 +16,7 @@ class Chatbot():
         }
         self.moods = (r'happy|sad|chill|relax|energetic|party|focus')
         self.genres = (r'rock|pop|rap|hip hop|jazz|edm|classical')
+        self.number = (r'(\d+)\s*song')
 
     def start(self):
         print("Welcome To Riptide.")
@@ -54,6 +52,13 @@ class Chatbot():
     def detect_genre(self, message):
         genre = re.search(self.genres, message)
         return genre
+    
+    def extract_number(self, message):
+        number = re.search(self.number, message)
+    
+        if number:
+            return number.group(1)  # Returns only the number portion
+        return None
 
     def chat(self):
         message = input().lower()
@@ -66,16 +71,16 @@ class Chatbot():
 
     def recommend(self, message):
         goal = self.detect_goal(message)
-        print(goal)
         mood = self.detect_mood(message)
-        if mood != None:
-            print(mood.group(0))
         genre = self.detect_genre(message)
-        if genre != None:
-            print(genre.group(0))
+        length = self.extract_number(message)
+
         filters = [goal, mood, genre]
-        dialog_manager(message, filters)
-        # add some way to talk to recommender system while sending message through
+        style_vec = dialog_manager(message, filters)
+        if length != None:
+            recommendation = recommender.recommend(style_vec, length)
+        else:
+            recommendation = recommender.recommend(style_vec, length)
         self.chat()
 
     def confused(self):
@@ -85,8 +90,6 @@ class Chatbot():
 
 def dialog_manager(message, filters):
     pass
-    recommendation = recomender.recommend
-    return recommendation
 
 bot = Chatbot()
 bot.start()
