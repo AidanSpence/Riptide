@@ -2,7 +2,7 @@ import random
 import re
 
 import sys, os
-sys.path.insert(0, os.path.abspath(r'..\_Recommendation System_\_AI Frontend'))
+sys.path.insert(0, os.path.abspath(r'..\_Recommendation_System_\Frontend'))
 
 import recommender
 
