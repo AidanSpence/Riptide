@@ -253,6 +253,7 @@ body {
 
 
 .chatbox-input-box{
+  display: flex;
   padding-left: 1%;
   padding-right: 1%;
   width: 95%;
@@ -269,8 +270,9 @@ body {
   align-self:center;
   justify-self: center;
   width: 95%;
-  height: 85%;
+  height: 80%;
   padding: 1%;
+  padding-left: 2%;
   /* border-radius: 3vmin; */
   background: transparent;
   border: none;
@@ -278,9 +280,40 @@ body {
   color: white;
   resize: none;
   scrollbar-color: var(--main-color) transparent;
+  font-size: clamp(1.5vw, 1.5vw, 24px);
 }
 
+ .send-button{
+  width: 5vmin;
+  height: auto;
+  justify-self: center;
+  align-self: center;
 
+  background-color: var(--secondary-color);
+  color: transparent;
+  font-size: 0px;
+  padding: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+} 
+ .send-button-button{
+  width: 0;
+  height: 0;
+  justify-self: center;
+  align-self: center;
+
+  background-color: var(--secondary-color);
+  color: transparent;
+  font-size: 0px;
+  padding: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+} 
+.send-button:hover {
+  background-color: var(--main-color);
+}
 /* chat box content END*/
 
 

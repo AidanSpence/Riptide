@@ -10,6 +10,7 @@ const menuUpPath = "assets/arrowUp.svg"
 
 const menuDownPath = "assets/arrowDown.svg"
 
+const sendButtonPath = "assets/send.svg"
 
 
 
@@ -19,8 +20,15 @@ const menuDownPath = "assets/arrowDown.svg"
 
 
 
-
-
+function sendButtonCreate() {
+    const chatbox = document.getElementById("chatbot-input-button");
+    const sendButton = document.createElement("img");
+    sendButton.src = sendButtonPath;
+    sendButton.alt = "Send Button";
+    sendButton.classList.add("send-button");
+    sendButton.id = "send-button";
+    chatbox.appendChild(sendButton);
+}
 
 function iconCreate(){
     const userIcon = document.createElement("img");
@@ -41,14 +49,17 @@ function dropdownCreate(ID){
 
 
 
-
-
 function chatItemCreate(ID){ // ID == Chatbox ID
     const chatItem = document.createElement("p");
     chatItem.src = menuDownPath;
     chatItem.alt = "Text";
     document.getElementById(ID).appendChild(chatItem);
 }
+
+
+
+
+// FLASK FETCH FUNCTIONS START
 
 async function chatFetchFlask() {
     try {
@@ -85,6 +96,8 @@ async function playlistFetchFlask() {
     }
 }
 
+
+// FLASK FETCH FUNCTIONS END
 
 
 
@@ -155,27 +168,34 @@ async function loadchat(text, id){
 }
 
 
+async function getChatBoxText() {
+    let box_text = document.getElementById("chatbox-input")
+    console.log(box_text)
+    return(box_text)
+}
 
 
-
-
+async function textBoxButtonListener() {
+    //const
+    
+}
 
 
 
 async function init() {
     iconCreate();
+    sendButtonCreate();
 }
 async function chatRefresh() {
-    loadchat(await chatFetchFlask() ?? ["Error backend"], 0);
-    loadchat(await chatFetchFlask() ?? ["Error backend"], 1);
-    loadchat(await chatFetchFlask() ?? ["Error backend"], 0);
-    loadchat(await chatFetchFlask() ?? ["Error backend"], 1);
-    loadchat(await chatFetchFlask() ?? ["Error backend"], 0);
-    loadchat(await chatFetchFlask() ?? ["Error backend"], 1);
+    loadchat(await chatFetchFlask() ?? ["Message Error"], 0);
+    loadchat(await chatFetchFlask() ?? ["Message Error"], 1);
 }
 async function playlistRefresh() {
     loadPlaylists()
 }
+
+
+
 
 
 init();
