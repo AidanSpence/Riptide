@@ -13,7 +13,7 @@ class SongRecommender:
         self.model.eval()
 
         self.embeddings = np.load("_Recommendation_System_/models/embeddings.npy")
-        self.df = joblib.load("_Recommendation_System_/models/df.joblib")
+        self.df = joblib.load("_Recommendation_System_/models/df.jb")
 
     def recommend(self, query_vector, k=10):
         with torch.no_grad():
@@ -24,4 +24,4 @@ class SongRecommender:
         scores = cosine_similarity(query_emb, self.embeddings)[0]
         top_k = np.argsort(scores)[::-1][:k]
 
-        return self.df.iloc[top_k]
+        return self.df.iloc[top_k] # make return just name and title

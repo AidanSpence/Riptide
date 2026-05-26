@@ -55,7 +55,7 @@ def create_triplets(X, labels, n_samples=10000):
 def train_model():
     """Function for training the model and saving the best model and embeddings"""
     # Load Model and create triplets
-    X = joblib.load(f"{SAVE_DIR}/final_df_scaled.jb")
+    X = joblib.load(f"{SAVE_DIR}/X_final.jb")
     df = joblib.load(f"{SAVE_DIR}/df.jb")
 
     X_tensor = torch.tensor(X, dtype=torch.float32).to(DEVICE)

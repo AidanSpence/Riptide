@@ -19,6 +19,7 @@ class Chatbot():
             'playlist': r'playlist|new playlist',
             'new_song': r'new song|song| something new',
         }
+        self.style = (r'car|run|workout|sleep|dance|sport|party|study')
         self.moods = (r'happy|sad|chill|relax|energetic|party|focus')
         self.genres = (r'rock|pop|rap|hip hop|jazz|edm|classical')
         self.number = (r'(\d+)\s*song')
@@ -50,6 +51,10 @@ class Chatbot():
             elif found_match and goal =='new_song':
                 return 1
             
+    def detect_style(self, message):
+        style = re.search(self.style, message)
+        return style
+            
     def detect_mood(self, message):
         mood = re.search(self.moods, message)
         return mood
@@ -64,6 +69,9 @@ class Chatbot():
         if number:
             return number.group(1)  # Returns only the number portion
         return None
+    
+    def dialog_manager(self, message, filters):
+        pass
 
     def chat(self):
         message = input().lower()
@@ -76,14 +84,22 @@ class Chatbot():
 
     def recommend(self, message):
         goal = self.detect_goal(message)
+        style = self.detect_style(message)
         mood = self.detect_mood(message)
         genre = self.detect_genre(message)
-        length = self.extract_number(message)
+   
 
-        filters = [goal, mood, genre]
-        query_vector = dialog_manager(message, filters)
-        if length != None:
-            results = self.recommender.recommend(query_vector, k=int(length))
+        filters = [style, mood, genre]
+        query_vector = self.dialog_manager(message, filters)
+
+        if goal == 0:
+            length = self.extract_number(message)
+            if length != None:
+                results = self.recommender.recommend(query_vector, k=int(length))
+            else:
+                results = self.recommender.recommend(query_vector, k=10)
+        elif goal == 1:
+            results = self.recommender.recommend(query_vector, k=1)
         else:
             results = self.recommender.recommend(query_vector, k=10)
         self.chat()
@@ -93,8 +109,6 @@ class Chatbot():
         print(response)
         self.chat()
 
-def dialog_manager(message, filters):
-    pass
 
 bot = Chatbot()
 bot.start()
