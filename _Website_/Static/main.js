@@ -135,8 +135,7 @@ async function loadchat(){
     
     let chathtml = "";
     let id = 0;
-    let text = "ERROR"
-
+    let text = "Error loading chat, backend 404?"
     const chatItem = document.createElement("p");
 
     const chatContainer = document.getElementById("chatbox-window");
@@ -147,34 +146,30 @@ async function loadchat(){
         console.log("Chatbot Flask");
         console.log(data.chatbot_txt);
         console.log(data.msg_id);
-        let text = data.chatbot_txt;
+        text = data.chatbot_txt;
         id = data.msg_id;
-        chatItem.className = "chat-item";
-        chathtml += `<p>${text}</p>`
+        
     } 
     catch (error) {
         console.error('Error fetching data:', error);
     }
-    
+    finally
+    {
+        chatItem.className = "chat-item";
+        chathtml += `<p>${text}</p>`
 
+        if (id == '0') { // left
+            chatItem.style.alignSelf = 'start'
+            chatItem.style.marginRight = '5%'
+        }
+        if (id == '1') { // right
+            chatItem.style.alignSelf = 'end'
+            chatItem.style.marginLeft = '5%'
+        }
+        chatItem.innerHTML = chathtml;
 
-
-
-
-
-
-
-    if (id == '0') { // left
-        chatItem.style.alignSelf = 'start'
-        chatItem.style.marginRight = '5%'
+        chatContainer.appendChild(chatItem)
     }
-    if (id == '1') { // right
-        chatItem.style.alignSelf = 'end'
-        chatItem.style.marginLeft = '5%'
-    }
-    chatItem.innerHTML = chathtml;
-
-    chatContainer.appendChild(chatItem)
 }
 
 
