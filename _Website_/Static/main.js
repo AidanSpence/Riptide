@@ -28,7 +28,7 @@ function sendButtonCreate() {
 
     sendButton.addEventListener('click', () => { // listener
         // This needs to be changed to chatSendFlask
-        loadChatFlask(0)
+        loadChatFlask()
     });
 
     chatbox.appendChild(sendButton);
@@ -63,20 +63,6 @@ function chatItemCreate(ID){ // ID == Chatbox ID
 
 
 
-// FLASK FETCH FUNCTIONS START
-
-async function chatFetchFlask() { //combine this function and loadchat for recieving ids
-    try {
-        const response = await fetch('http://localhost:5000/api/chat');
-        const data = await response.json();
-        console.log("Chatbot Flask");
-        console.log(data.chatbot_txt);
-        return data.chatbot_txt
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-    
-}   
 
 
 async function playlistFetchFlask() {
@@ -145,17 +131,37 @@ async function loadPlaylists() {
     });
 }
 
-async function loadchat(text, id){
+async function loadchat(){
     
     let chathtml = "";
+    let id = 0;
+    let text = "ERROR"
 
     const chatItem = document.createElement("p");
 
     const chatContainer = document.getElementById("chatbox-window");
 
-    chatItem.className = "chat-item";
+    try {
+        const response = await fetch('http://localhost:5000/api/chat');
+        const data = await response.json();
+        console.log("Chatbot Flask");
+        console.log(data.chatbot_txt);
+        console.log(data.msg_id);
+        let text = data.chatbot_txt;
+        id = data.msg_id;
+        chatItem.className = "chat-item";
+        chathtml += `<p>${text}</p>`
+    } 
+    catch (error) {
+        console.error('Error fetching data:', error);
+    }
     
-    chathtml += `<p>${text}</p>`
+
+
+
+
+
+
 
 
     if (id == '0') { // left
@@ -192,8 +198,8 @@ async function playlistRefresh() {
 }
 
 // Simplifies the line into a smaller function
-async function loadChatFlask(sideID) {
-    loadchat(await chatFetchFlask() ?? ["Message Error"], sideID)
+async function loadChatFlask() {
+    loadchat()
 } 
 
 

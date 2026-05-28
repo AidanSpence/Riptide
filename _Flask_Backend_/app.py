@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 
-
+id = 0
 
 
 app = Flask(__name__)
@@ -15,7 +15,9 @@ def hello_world():
 # ROUTES FOR INTERNAL CALLS (E.G HTML AND AI BACKEND)
 @app.route('/api/chat', methods=['GET'])
 def send_chatbot():
-    items={'chatbot_txt': "This is text that is coming from flask"}
+    global id
+    id = (id+1)%2
+    items={'chatbot_txt': "This is text that is coming from flask", 'msg_id': f"{id}"}
     return jsonify(items), 200
 
 @app.route('/api/playlist', methods=['GET'])
