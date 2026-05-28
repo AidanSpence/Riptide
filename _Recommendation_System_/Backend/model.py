@@ -5,6 +5,7 @@ import numpy as np
 import joblib
 import random
 
+
 SAVE_DIR  = "_Recommendation_System_\\models"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")

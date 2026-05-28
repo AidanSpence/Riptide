@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+from _Recommendation_System_.Frontend import chatbot
+
 
 
 

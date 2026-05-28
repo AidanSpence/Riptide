@@ -30,9 +30,7 @@ def build_features(df: pd.DataFrame): # Forces pandas dataframe as input
     # Vectorize the text columns
     vectorizer = TfidfVectorizer(max_features=20000)
 
-    for column in TEXT_COLUMNS:
-        data = df[column].fillna("").astype(str)
-
+    data = df[TEXT_COLUMNS].fillna("").agg(" ".join, axis=1)
     vector = vectorizer.fit_transform(data)
 
     svd = TruncatedSVD(n_components=512, random_state=42)
@@ -41,17 +39,15 @@ def build_features(df: pd.DataFrame): # Forces pandas dataframe as input
     X_final = np.hstack([X_num, X_text])
 
 
-
-    pca = PCA(n_components=2)
-    X_2d = pca.fit_transform(X_final)
-
-
     joblib.dump(X_final, f"{SAVE_DIR}/X_final.jb")
     joblib.dump(df, f"{SAVE_DIR}/df.jb")
-    return X_final, df, X_2d
+    joblib.dump(vectorizer, f"{SAVE_DIR}/vectorizer.jb")
+    joblib.dump(svd, f"{SAVE_DIR}/svd.jb")
+    joblib.dump(scaler, f"{SAVE_DIR}/scaler.jb")
+    return X_final, df
 
 
-def cluster_data(final_scaled, df, X_2d, n_clusters=20):
+def cluster_data(final_scaled, df, n_clusters=20):
     """Function for clustering the songs using KMeans"""
     kmeans = KMeans(
         n_clusters=n_clusters,
@@ -70,13 +66,9 @@ def cluster_data(final_scaled, df, X_2d, n_clusters=20):
     joblib.dump(df, f"{SAVE_DIR}/df.jb")
     df.to_csv(f"{SAVE_DIR}/df.csv")
 
-    plt.scatter(X_2d[:,0], X_2d[:,1], c=kmeans.labels_)
-    plt.show()
-    
-
 
 if __name__ == "__main__":
     df = pd.read_csv("output.csv")
 
-    scaled, df, X_2d = build_features(df)
-    cluster_data(scaled, df, X_2d)
+    scaled, df = build_features(df)
+    cluster_data(scaled, df)

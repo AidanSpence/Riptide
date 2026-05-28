@@ -3,17 +3,22 @@ import numpy as np
 import joblib
 from sklearn.metrics.pairwise import cosine_similarity
 from _Recommendation_System_.Backend.model import TripletNet
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+MODELS_PATH = PROJECT_ROOT / "models"
+
 
 class SongRecommender:
     def __init__(self, input_dim, device="cpu"):
         self.device = device
 
         self.model = TripletNet(input_dim).to(device)
-        self.model.load_state_dict(torch.load("_Recommendation_System_/models/model.pt", map_location=device))
+        self.model.load_state_dict(torch.load(MODELS_PATH / "model.pt", map_location=device))
         self.model.eval()
 
-        self.embeddings = np.load("_Recommendation_System_/models/embeddings.npy")
-        self.df = joblib.load("_Recommendation_System_/models/df.jb")
+        self.embeddings = np.load(MODELS_PATH / "embeddings.npz")
+        self.df = joblib.load(MODELS_PATH / "df.jb")
 
     def recommend(self, query_vector, k=10):
         with torch.no_grad():
