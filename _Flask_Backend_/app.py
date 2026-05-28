@@ -23,16 +23,18 @@ def send_playlist():
     items = {
         "playlist_data": [
             {
-                "title": "This is a \"playlist\" and its name is so incredibly long that its completely insane",
+                "title": "Generic playlist 1 flask",
                 "duration": "1H 30M"
             },
             {
-                "title": "Another playlist from flask",
+                "title": "Generic playlist 2 flask",
                 "duration": "45M"
             }
         ]
     }
     return jsonify(items), 200
+
+
 
 #ROUTES FOR EXTERNAL API (E.G SPOTIFY AND SENSTIVE DATA)
 

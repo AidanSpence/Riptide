@@ -1,19 +1,14 @@
-
-
 const playlist = []
 
+const userIconPath = "assets/userIcon.svg";
 
+const menuUpPath = "assets/arrowUp.svg";
 
-const userIconPath = "assets/userIcon.svg"
+const menuDownPath = "assets/arrowDown.svg";
 
-const menuUpPath = "assets/arrowUp.svg"
+const sendButtonPath = "assets/send.svg";
 
-const menuDownPath = "assets/arrowDown.svg"
-
-const sendButtonPath = "assets/send.svg"
-
-
-
+const buttonlisten = document.getElementById("send-button");
 
 
 
@@ -21,12 +16,21 @@ const sendButtonPath = "assets/send.svg"
 
 
 function sendButtonCreate() {
+/* This creates both the button and also contains the listner for the button */
     const chatbox = document.getElementById("chatbot-input-button");
+
     const sendButton = document.createElement("img");
+
     sendButton.src = sendButtonPath;
     sendButton.alt = "Send Button";
     sendButton.classList.add("send-button");
     sendButton.id = "send-button";
+
+    sendButton.addEventListener('click', () => { // listener
+        // This needs to be changed to chatSendFlask
+        loadChatFlask(0)
+    });
+
     chatbox.appendChild(sendButton);
 }
 
@@ -61,7 +65,7 @@ function chatItemCreate(ID){ // ID == Chatbox ID
 
 // FLASK FETCH FUNCTIONS START
 
-async function chatFetchFlask() {
+async function chatFetchFlask() { //combine this function and loadchat for recieving ids
     try {
         const response = await fetch('http://localhost:5000/api/chat');
         const data = await response.json();
@@ -175,29 +179,25 @@ async function getChatBoxText() {
 }
 
 
-async function textBoxButtonListener() {
-    //const
-    
-}
-
 
 
 async function init() {
     iconCreate();
     sendButtonCreate();
 }
-async function chatRefresh() {
-    loadchat(await chatFetchFlask() ?? ["Message Error"], 0);
-    loadchat(await chatFetchFlask() ?? ["Message Error"], 1);
-}
+
+// refreshes the playlists, in a function for when additional functionality required
 async function playlistRefresh() {
     loadPlaylists()
 }
 
+// Simplifies the line into a smaller function
+async function loadChatFlask(sideID) {
+    loadchat(await chatFetchFlask() ?? ["Message Error"], sideID)
+} 
 
 
 
 
 init();
-chatRefresh()
 playlistRefresh()
