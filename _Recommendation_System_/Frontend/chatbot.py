@@ -16,18 +16,51 @@ class Dialog_Manager:
         self.mood = mood.group(0) if mood else None
         self.genre = genre.group(0) if genre else None
         self.text = message
+        self.mood_weights = {
+            "happy" : {"tempo": 125, "key": 9, "loudness": 0.75, "mode": 1},
+            "sad" : {"tempo": 70, "key": 2, "loudness": 0.35, "mode": 0},
+            "chill" : {"tempo": 90, "key": 7, "loudness": 0.45, "mode": 1},
+            "relax" : {"tempo": 60, "key": 5, "loudness": 0.25, "mode": 1},
+            "energetic" : {"tempo": 140, "key": 10, "loudness": 0.9, "mode": 1},
+            "party" : {"tempo": 128, "key": 11, "loudness": 0.95, "mode": 1},
+            "focus" : {"tempo": 85, "key": 6, "loudness": 0.4, "mode": 1},
+        }
+        self.style_weights = {
+            "car" : {"tempo": 80, "key": 5, "loudness": 0.4, "mode": 1},
+            "run" : {"tempo": 150, "key": 10, "loudness": 0.9, "mode": 1},
+            "workout" : {"tempo": 140, "key": 10, "loudness": 0.9, "mode": 1},
+            "sleep" : {"tempo": 50, "key": 3, "loudness": 0.15, "mode": 0},
+            "dance" : {"tempo": 128, "key": 11, "loudness": 0.95, "mode": 1},
+            "sport" : {"tempo": 145, "key": 10, "loudness": 0.92, "mode": 1},
+            "party" : {"tempo": 128, "key": 11, "loudness": 0.98, "mode": 1},
+            "study" : {"tempo": 85, "key": 6, "loudness": 0.35, "mode": 1},
+        }
+        self.FEATURES = ["tempo", "key", "loudness", "mode"]
+
+    def apply_map(self):
+        if self.mood in self.mood_weights:
+            mood_dict = self.mood_weights[self.mood]
+            mood_vec = np.array([mood_dict[f] for f in self.FEATURES])
+        else:
+            mood_vec = np.mean([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()], axis=0)
+
+        if self.style in self.style_weights:
+            style_dict = self.style_weights[self.style]
+            style_vec = np.array([style_dict[f] for f in self.FEATURES])
+        else:
+            style_vec = np.mean([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()], axis=0)
+
+        return mood_vec, style_vec
 
     def dialog_manager(self):
-        enriched_text = self.text
 
-        if self.mood:
-            enriched_text += f" {self.mood}"
-        if self.genre:
-            enriched_text += f" {self.genre}"
-        if self.style:
-            enriched_text += f" {self.style}"
+        mood_vec, style_vec = self.apply_map()
 
-        return enriched_text
+        final_vec = 0.5 * mood_vec + 0.2 * style_vec
+        final_vec[0] /= 200.0  # Normalise tempo
+        final_vec[1] /= 11.0 # Normalise key
+
+        return final_vec
 
 
 class Chatbot:
@@ -105,7 +138,6 @@ class Chatbot:
     def help(self):
         response = "Ask me to 'Create a _____ playlist'" # MAKE A BETTER VERSION OF THIS
         print(response)
-        self.chat()
 
     def recommend(self):
         goal = self.detect_goal()
@@ -114,30 +146,26 @@ class Chatbot:
         genre = self.detect_genre()
 
         manager = Dialog_Manager(style, mood, genre, self.message)
-        query_text = manager.dialog_manager()
-        query_vector = self.vectorizer.transform([query_text]).toarray()[0]
+        request_text = manager.dialog_manager()
+        text_vector = self.vectorizer.transform([self.message]).toarray()[0]
+        query_vector = np.concatenate([request_text,text_vector])
 
         if goal == 0:
             length = self.extract_number()
-            if length != None:
-                results = self.recommender.recommend(query_vector, k=int(length))
-            else:
-                results = self.recommender.recommend(query_vector, k=10)
+            k_val = int(length) if length is not None else 10
         elif goal == 1:
-            results = self.recommender.recommend(query_vector, k=1)
+            k_val = 1
         else:
-            results = self.recommender.recommend(query_vector, k=10)
-        self.chat()
+            k_val = 10
+        
+        results = self.recommender.recommend(query_vector, k=k_val)
+        print(results)
 
     def confused(self):
         response = "Sorry I don't understand, Type 'Help' for more options."
         print(response)
-        self.chat()
 
 
 if __name__ == "__main__":
     bot = Chatbot()
-    try:
-        bot.start()
-    except Exception as e:
-        print(e)
+    bot.start()
