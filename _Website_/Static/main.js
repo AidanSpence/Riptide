@@ -8,7 +8,6 @@ const menuDownPath = "assets/arrowDown.svg";
 
 const sendButtonPath = "assets/send.svg";
 
-const buttonlisten = document.getElementById("send-button");
 
 
 
@@ -47,7 +46,7 @@ function dropdownCreate(ID){
     const dropdown = document.createElement("img");
     dropdown.src = menuDownPath;
     dropdown.alt = "Dropdown menu";
-    dropdown.className = "dropdownArrow"
+    dropdown.className = "dropdown-arrow"
     document.getElementById(ID).appendChild(dropdown);
 }
 
@@ -135,7 +134,7 @@ async function loadchat(){
     
     let chathtml = "";
     let id = 0;
-    let text = "Error loading chat, backend 404?"
+    let text = "Error loading chat, backend 404?" // THIS NEEDS CHANGING LATER, JUST BEST TO BE LEFT FOR TESTING FOR NOW
     const chatItem = document.createElement("p");
 
     const chatContainer = document.getElementById("chatbox-window");
@@ -198,7 +197,33 @@ async function loadChatFlask() {
 } 
 
 
+async function infoPopup() {
+    
+}
 
+async function navButtonsListen() {
+
+    const playlistButton = document.getElementById("playlistsButton");
+    const infoButton = document.getElementById("infoButton");
+    const loginButton = document.getElementById("loginButton");
+    playlistButton.addEventListener('click', () => { // listener
+        console.log("playlist button clicked")
+    });
+    infoButton.addEventListener('click', () => { // listener
+        console.log("info button clicked")
+    });
+    loginButton.addEventListener('click', () => { // listener
+        console.log("login button clicked")
+    });
+}
+
+async function navButtonsCloseListen() {
+    const infoPopupClose = document.getElementById("infoPopupClose")
+    infoPopupClose.addEventListener('click', () => { // listener
+        console.log("close button clicked")
+    });
+}
 
 init();
 playlistRefresh()
+navButtonsListen()

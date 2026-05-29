@@ -43,6 +43,34 @@ body {
   
 }
 
+.info-popup-text {
+  align-self: right;
+  justify-self: right;
+  color: white;
+  word-wrap: normal;
+  font-size: x-large;
+  overflow: auto;
+
+}
+
+.info-popup-close{
+  color: white;
+  font-size: xx-large;
+  align-self: center;
+  justify-self: center;
+  cursor: pointer;
+}
+
+.info-popup-box{
+  display: flex;
+  border-radius: 3vmin;
+  max-height: 80vmin;
+  min-height: 80vmin;
+  background-image: linear-gradient(var(--secondary-color), var(--main-color));
+  border: 10px solid green;
+}
+
+
 .grid-container{
   display: grid;
   grid-template-columns: 4fr 5fr 5fr; /* 4:5:5 ratio */
@@ -81,7 +109,7 @@ body {
   box-sizing: border-box;
 }
 
-.userIcon {
+.user-icon {
     width: 30vmin;
     height: 30vmin;
     margin: 0px;
@@ -89,7 +117,7 @@ body {
     background-color: black;
 }
 
-.button{
+.nav-button{
   justify-self: center;
   margin-top: 3%;
   width: 99%;
@@ -99,9 +127,12 @@ body {
   text-align: center;
   font-size: auto;
   box-sizing: border-box;
-  
+  cursor: pointer;
 }
-
+.nav-button :hover{
+  background-color: var(--main-color);
+  border-radius: 3vmin;
+}
 .button-text{
   place-items: center;
   display: grid;
@@ -166,7 +197,7 @@ body {
 /*   justify-self: center;
   align-self: center;*/
 
-.dropdownArrow{
+.dropdown-arrow{
   display: grid;
   width: 3vmin;
   height: 3vmin;
@@ -301,11 +332,12 @@ body {
   padding: none;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 1vmin;
 } 
 
 .send-button:hover {
   background-color: var(--main-color);
+  border-radius: 3vmin;
 }
 /* chat box content END*/
 
