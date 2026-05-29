@@ -113,3 +113,4 @@ def train_model():
 
 if __name__ == "__main__":
     train_model()
+    print("Model training complete and saved.")

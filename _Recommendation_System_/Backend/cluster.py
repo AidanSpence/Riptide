@@ -24,30 +24,30 @@ def build_features(df: pd.DataFrame): # Forces pandas dataframe as input
     # Numeric columns
     df_num = df[NUMERIC_COLUMNS].fillna(0)
 
-    scaler = StandardScaler()
-    X_num = scaler.fit_transform(df_num)
+    num_scaler = StandardScaler()
+    X_num = num_scaler.fit_transform(df_num)
     
     # Vectorize the text columns
     vectorizer = TfidfVectorizer(max_features=20000)
 
     data = df[TEXT_COLUMNS].fillna("").agg(" ".join, axis=1)
-    vector = vectorizer.fit_transform(data)
+    text_vector = vectorizer.fit_transform(data)
 
     svd = TruncatedSVD(n_components=512, random_state=42)
-    X_text = svd.fit_transform(vector)
+    X_text = svd.fit_transform(text_vector)
 
     X_final = np.hstack([X_num, X_text])
 
 
-    joblib.dump(X_final, f"{SAVE_DIR}/X_final.jb")
     joblib.dump(df, f"{SAVE_DIR}/df.jb")
+    joblib.dump(df_num, f"{SAVE_DIR}/df_num.jb")
     joblib.dump(vectorizer, f"{SAVE_DIR}/vectorizer.jb")
     joblib.dump(svd, f"{SAVE_DIR}/svd.jb")
-    joblib.dump(scaler, f"{SAVE_DIR}/scaler.jb")
+    joblib.dump(num_scaler, f"{SAVE_DIR}/num_scaler.jb")
     return X_final, df
 
 
-def cluster_data(final_scaled, df, n_clusters=20):
+def cluster_data(X_final, df, n_clusters=20):
     """Function for clustering the songs using KMeans"""
     kmeans = KMeans(
         n_clusters=n_clusters,
@@ -56,7 +56,7 @@ def cluster_data(final_scaled, df, n_clusters=20):
         max_iter=300,
         random_state=42
     )
-    labels = kmeans.fit_predict(final_scaled)
+    labels = kmeans.fit_predict(X_final)
 
     df['cluster'] = labels
 
@@ -64,11 +64,13 @@ def cluster_data(final_scaled, df, n_clusters=20):
     np.savez_compressed(f"{SAVE_DIR}/clusters.npz", df['cluster'].values)
     joblib.dump(kmeans, f"{SAVE_DIR}/kmeans.jb")
     joblib.dump(df, f"{SAVE_DIR}/df.jb")
+    joblib.dump(X_final, f"{SAVE_DIR}/X_final.jb")
     df.to_csv(f"{SAVE_DIR}/df.csv")
 
 
 if __name__ == "__main__":
     df = pd.read_csv("output.csv")
 
-    scaled, df = build_features(df)
-    cluster_data(scaled, df)
+    X_final, df = build_features(df)
+    cluster_data(X_final, df)
+    print("Clustering complete and data saved.")

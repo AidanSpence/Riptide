@@ -14,7 +14,7 @@ class SongRecommender:
         self.device = device
 
         self.model = TripletNet(input_dim).to(device)
-        self.model.load_state_dict(torch.load(MODELS_PATH / "model.pt", map_location=device))
+        self.model.load_state_dict(torch.load(MODELS_PATH / "model.pt", map_location=device, weights_only=True))
         self.model.eval()
 
         self.embeddings = np.load(MODELS_PATH / "embeddings.npz")
@@ -29,4 +29,4 @@ class SongRecommender:
         scores = cosine_similarity(query_emb, self.embeddings)[0]
         top_k = np.argsort(scores)[::-1][:k]
 
-        return self.df.iloc[top_k] # make return just name and title
+        return self.df.iloc[top_k][["title", "artist_name"]]

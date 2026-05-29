@@ -9,10 +9,32 @@ from _Recommendation_System_.Frontend.recommender import SongRecommender
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODELS_PATH = PROJECT_ROOT / "models"
 
+
+class Dialog_Manager:
+    def __init__(self, style, mood, genre, message):
+        self.style = style.group(0) if style else None
+        self.mood = mood.group(0) if mood else None
+        self.genre = genre.group(0) if genre else None
+        self.text = message
+
+    def dialog_manager(self):
+        enriched_text = self.text
+
+        if self.mood:
+            enriched_text += f" {self.mood}"
+        if self.genre:
+            enriched_text += f" {self.genre}"
+        if self.style:
+            enriched_text += f" {self.style}"
+
+        return enriched_text
+
+
 class Chatbot:
     def __init__(self):
         self.X =joblib.load(MODELS_PATH / "X_final.jb")
         self.recommender = SongRecommender(input_dim=self.X.shape[1], device="cpu")
+        self.vectorizer = joblib.load(MODELS_PATH / "vectorizer.jb")
         self.message = " "
         self.intent = {
             'help': r'help|assist|support|how (do|to)|what can you do|commands|options',
@@ -38,16 +60,12 @@ class Chatbot:
         self.chat()
 
     def detect_intent(self):
-        for key,value in self.intent.items():
-            intent = key
-            pattern = value
-            found_match = re.search(pattern, self.message)
-            if found_match and intent =='help':
-                return self.help()
-            elif found_match and intent =='recommend':
-                return self.recommend()
-            #elif found_match and intent =='improve':
-                #return self.improve()
+        if re.search(self.intent["help"], self.message):
+            return self.help()
+
+        if re.search(self.intent["recommend"], self.message):
+            return self.recommend()
+        
         return self.confused()
     
     def detect_goal(self):
@@ -80,8 +98,9 @@ class Chatbot:
         return None
 
     def chat(self):
-        self.message = input().lower()
-        self.detect_intent()
+        while True:
+            self.message = input().lower()
+            self.detect_intent()
 
     def help(self):
         response = "Ask me to 'Create a _____ playlist'" # MAKE A BETTER VERSION OF THIS
@@ -95,7 +114,8 @@ class Chatbot:
         genre = self.detect_genre()
 
         manager = Dialog_Manager(style, mood, genre, self.message)
-        query_vector = manager.dialog_manager()
+        query_text = manager.dialog_manager()
+        query_vector = self.vectorizer.transform([query_text]).toarray()[0]
 
         if goal == 0:
             length = self.extract_number()
@@ -114,39 +134,6 @@ class Chatbot:
         print(response)
         self.chat()
 
-class Dialog_Manager:
-    def __init__(self, style, mood, genre, message):
-        self.vectorizer = joblib.load(MODELS_PATH / "vectorizer.jb")
-        self.svd = joblib.load(MODELS_PATH / "svd.jb")
-        self.scaler = joblib.load(MODELS_PATH / "scaler.jb")
-        self.style = style
-        self.mood = mood
-        self.genre = genre
-        self.text = message
-        
-
-    def dialog_manager(self):
-
-        if self.mood:
-            self.text += (" " + self.mood.group(0)) * 2
-
-        elif self.genre:
-            self.text += (" " + self.genre.group(0)) * 2
-
-        elif self.style:
-            self.text += (" " + self.style.group(0)) * 2
-
-        vec_tfidf = self.vectorizer.transform([self.text])
-
-        vec_text = self.svd.transform(vec_tfidf)
-
-        vec_num = self.numeric_means.reshape(1, -1)
-
-        vec = np.hstack([vec_num,vec_text])
-
-        vec = self.scaler.transform(vec)
-
-        return vec
 
 if __name__ == "__main__":
     bot = Chatbot()
