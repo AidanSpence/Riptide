@@ -17,7 +17,8 @@
 
 
 
-
+<!-- All js ID's are in camelCase, while all css/html classes
+ are in kebab-case-->
 <body> <!-- Body start -->
 
 
@@ -25,27 +26,36 @@
 
     </nav>
 
+    <div class="info-popup-box" id="infoPopupBox" style="display: none;"> <!--HIDDEN for now AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-->
+        <div class="info-popup-close" id="infoPopupClose">&times;</div>
+        <div class="info-popup-text" id="infoPopupText">
+            <p>"This project called ‘Riptide’ is an AI natural language music recommendation system that utilizes artificial intelligence with a clustering backend to create a hybrid system that uses minimal user data and maximizes musical diversity."</p>
+        </div>
+    </div>
+
+
+
+
     <div class="grid-container">
         <div class="nav-box">
             <div class="nav-grid">
 
-                <div class="userIcon" id="userIcon">
+                <div class="user-icon" id="userIcon">
 
                 </div>
 
-                <div class="playlists-button button"> 
+                <div class="playlists-button nav-button" id="playlistsButton"> 
+                    <button id="playlistsButton" style="display: none;"></button>
                     <div class="button-text"> Playlists </div>  
                 </div>
 
-                <div class="info-button button"> 
+                <div class="info-button nav-button" id="infoButton"> 
+                    <button id="infoButton" style="display: none;"></button>
                     <div class="button-text"> Info </div> 
                 </div>
 
-                <div class="music-button button"> 
-                    <div class="button-text"> Music </div> 
-                </div>
-
-                <div class="login-button button"> 
+                <div class="login-button nav-button"  id="loginButton"> 
+                    <button id="loginButton" style="display: none;"></button>
                     <div class="button-text"> Login </div> 
                 </div>
 
@@ -54,7 +64,7 @@
         <div class="playlist-wrapper">
             <div class="playlist-box">
                 <div class="playlist-grid" id="playlist-grid">
-                    <!-- JS BOXES GENERATE HERE-->
+                    <!-- JS PLAYLIST BOXES GENERATE HERE-->
                 </div>
             </div>
         </div>
@@ -63,8 +73,12 @@
             <div class="chatbox-window" id="chatbox-window">
 
             </div>
-            <div class="chatbox-input-box">
-                <textarea name="chatbox" class="chatbox-input"></textarea>
+            <div class="chatbox-input-box" id = "chatbox-input-box">
+                <textarea name="chatbox" class = "chatbox-input" id = "chatbox-input"></textarea>
+                <div class="chatbot-input-button" id="chatbot-input-button">
+                <!--Send button image is placed here-->
+                </div>
+
             </div>
         </div>
 
