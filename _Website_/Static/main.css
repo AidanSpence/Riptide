@@ -43,10 +43,38 @@ body {
   
 }
 
+.info-popup-text {
+  align-self: right;
+  justify-self: right;
+  color: white;
+  word-wrap: normal;
+  font-size: x-large;
+  overflow: auto;
+
+}
+
+.info-popup-close{
+  color: white;
+  font-size: xx-large;
+  align-self: center;
+  justify-self: center;
+  cursor: pointer;
+}
+
+.info-popup-box{
+  display: flex;
+  border-radius: 3vmin;
+  max-height: 80vmin;
+  min-height: 80vmin;
+  background-image: linear-gradient(var(--secondary-color), var(--main-color));
+  border: 10px solid green;
+}
+
+
 .grid-container{
   display: grid;
   grid-template-columns: 4fr 5fr 5fr; /* 4:5:5 ratio */
-  max-height: 83%;
+  max-height: 80vmin;
   min-height: 80vmin;
   width: 97%;
   gap: 1%;
@@ -81,7 +109,7 @@ body {
   box-sizing: border-box;
 }
 
-.userIcon {
+.user-icon {
     width: 30vmin;
     height: 30vmin;
     margin: 0px;
@@ -89,7 +117,7 @@ body {
     background-color: black;
 }
 
-.button{
+.nav-button{
   justify-self: center;
   margin-top: 3%;
   width: 99%;
@@ -99,9 +127,12 @@ body {
   text-align: center;
   font-size: auto;
   box-sizing: border-box;
-  
+  cursor: pointer;
 }
-
+.nav-button :hover{
+  background-color: var(--main-color);
+  border-radius: 3vmin;
+}
 .button-text{
   place-items: center;
   display: grid;
@@ -166,7 +197,7 @@ body {
 /*   justify-self: center;
   align-self: center;*/
 
-.dropdownArrow{
+.dropdown-arrow{
   display: grid;
   width: 3vmin;
   height: 3vmin;
@@ -183,12 +214,12 @@ body {
 #playlist-grid p { /* Font for playlist small text */
   font-size: clamp(1vw, 1vw, 24px);
   color: lightgrey;
-  margin: 1%;
+  margin: 5%;
   grid-row:1;
   justify-self: auto;
-  align-self: center;
+  align-self: end;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  text-overflow: auto;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
 }
@@ -218,7 +249,7 @@ body {
   flex-direction: column;
   overflow-y:hidden;
   width:100%;
-  height:100%;
+  max-height:5fr;
   background-image: linear-gradient(var(--secondary-color), #101111);
   border-radius: 3vmin;
   align-items: center;
@@ -226,7 +257,8 @@ body {
 
 
 .chatbox-window{
-  display: grid;
+  display: flex;
+  flex-direction: column;
   row-gap: 0;
   margin-top: 1%;
   border-radius: 3vmin;
@@ -252,6 +284,7 @@ body {
 
 
 .chatbox-input-box{
+  display: flex;
   padding-left: 1%;
   padding-right: 1%;
   width: 95%;
@@ -268,8 +301,9 @@ body {
   align-self:center;
   justify-self: center;
   width: 95%;
-  height: 85%;
+  height: 80%;
   padding: 1%;
+  padding-left: 2%;
   /* border-radius: 3vmin; */
   background: transparent;
   border: none;
@@ -277,9 +311,34 @@ body {
   color: white;
   resize: none;
   scrollbar-color: var(--main-color) transparent;
+  font-size: clamp(1.5vw, 1.5vw, 24px);
+}
+.chatbot-input-button{
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-self:center;
+  justify-self: center;
+  height: 5vmin;
+  width: 5vmin;
 }
 
+.send-button{
+  width: 5vmin;
+  height: auto;
+  background-color: var(--secondary-color);
+  color: transparent;
+  font-size: 0px;
+  padding: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 1vmin;
+} 
 
+.send-button:hover {
+  background-color: var(--main-color);
+  border-radius: 3vmin;
+}
 /* chat box content END*/
 
 
