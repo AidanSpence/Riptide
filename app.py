@@ -2,8 +2,6 @@ from flask import Flask, jsonify, request
 # This is required for correct custom port routing 
 from flask_cors import CORS
 
-from _Recommendation_System_.Frontend import chatbot
-
 # Variables
 id = 0
 app = Flask(__name__)

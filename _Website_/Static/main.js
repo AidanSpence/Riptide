@@ -8,7 +8,7 @@ const menuDownPath = "assets/arrowDown.svg";
 
 const sendButtonPath = "assets/send.svg";
 
-
+const BACKEND_ADDRESS = "http://localhost:5000/" // PRODUCTION ADDRESS, MAYBE I GET FROM ENV VAR LATER?
 
 
 
@@ -26,7 +26,7 @@ function sendButtonCreate() {
     sendButton.id = "send-button";
 
     sendButton.addEventListener('click', () => { // listener
-        // This needs to be changed to chatSendFlask
+        // This needs to be changed to chatSendFlask --------------------------------------------------------------------
         loadChatFlask()
     });
 
@@ -66,7 +66,7 @@ function chatItemCreate(ID){ // ID == Chatbox ID
 
 async function playlistFetchFlask() {
     try {
-        const response = await fetch('http://localhost:5000/api/playlist');
+        const response = await fetch(`${BACKEND_ADDRESS}/api/playlist`);
         const data = await response.json();
 
         console.log("Playlist Flask");
@@ -131,6 +131,7 @@ async function loadPlaylists() {
 }
 
 async function loadchat(){
+    /* This is for loading previous chats, it takes an input from flask */
     
     let chathtml = "";
     let id = 0;
@@ -140,7 +141,7 @@ async function loadchat(){
     const chatContainer = document.getElementById("chatbox-window");
 
     try {
-        const response = await fetch('http://localhost:5000/api/chat');
+        const response = await fetch(`${BACKEND_ADDRESS}api/chat`);
         const data = await response.json();
         console.log("Chatbot Flask");
         console.log(data.chatbot_txt);
@@ -178,7 +179,9 @@ async function getChatBoxText() {
     return(box_text)
 }
 
-
+async function chatSendFlask(){
+    let 
+}
 
 
 async function init() {
