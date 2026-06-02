@@ -7,7 +7,6 @@ const menuUpPath = "assets/arrowUp.svg";
 const menuDownPath = "assets/arrowDown.svg";
 
 const sendButtonPath = "assets/send.svg";
-
 const BACKEND_ADDRESS = "http://localhost:5000/" // PRODUCTION ADDRESS, MAYBE I GET FROM ENV VAR LATER?
 
 
@@ -130,7 +129,7 @@ async function loadPlaylists() {
     });
 }
 
-async function loadchat(){
+async function loadChat(){
     /* This is for loading previous chats, it takes an input from flask */
     
     let chathtml = "";
@@ -174,13 +173,14 @@ async function loadchat(){
 
 
 async function getChatBoxText() {
-    let box_text = document.getElementById("chatbox-input")
+    let box_text = document.getElementById("chatbox-input").value
     console.log(box_text)
-    return(box_text)
+    return box_text
 }
 
-async function chatSendFlask(){
-    let 
+async function sendChatBoxText() {
+    let tosend = getChatBoxText();
+    fetch(`${}api/chat/input`)
 }
 
 
@@ -194,10 +194,7 @@ async function playlistRefresh() {
     loadPlaylists()
 }
 
-// Simplifies the line into a smaller function
-async function loadChatFlask() {
-    loadchat()
-} 
+
 
 
 async function infoPopup() {
@@ -214,6 +211,7 @@ async function navButtonsListen() {
     });
     infoButton.addEventListener('click', () => { // listener
         console.log("info button clicked")
+        getChatBoxText()
     });
     loginButton.addEventListener('click', () => { // listener
         console.log("login button clicked")

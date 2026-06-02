@@ -17,14 +17,14 @@ def hello_world():
 
 
 # ROUTES FOR INTERNAL CALLS (E.G HTML AND AI BACKEND)
-"""This returns chat content as chatbot_txt:text, and 
-returns msg_id as 0 or 1.
-0 = justification left and 1 = right"""
-@app.route('/api/chat', methods=['GET'])
-def send_chatbot(user_input: str):
-    bot_output = bot.chat(user_input)
-    items={'chatbot_txt': f"{bot_output}", 'msg_id': "0"}
-    return jsonify(items), 200
+# """This returns chat content as chatbot_txt:text, and 
+# returns msg_id as 0 or 1.
+# 0 = justification left and 1 = right"""
+# @app.route('/api/chat', methods=['GET'])
+# def send_chatbot(user_input: str):
+#     bot_output = bot.chat(user_input)
+#     items={'chatbot_txt': f"{bot_output}", 'msg_id': "0"}
+#     return jsonify(items), 200
 
 
 """Passes playlist info as a list of json, with the values:
@@ -44,6 +44,25 @@ def send_playlist():
         ]
     }
     return jsonify(items), 200
+
+
+
+
+"""
+This route will recieve data from the website as user_input, 
+which will then be passed into the chatbot
+"""
+@app.route('api/chat/input', methods=['POST'])
+def get_response():
+    recieved = request.get_json()
+    user_input = recieved.get('user_txt')
+    if not user_input:
+        print("ahhhh i cant find it")
+        pass
+        #return "sdfghjkl" - find some way to return
+    #Find some way to return
+    print("found it", user_input)
+    pass
 
 
 
