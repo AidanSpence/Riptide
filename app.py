@@ -5,10 +5,9 @@ from flask_cors import CORS
 from _Recommendation_System_.Frontend import chatbot
 
 # Variables
-id = 0
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5500"]) 
-
+CORS(app, origins=["*"]) 
+bot = chatbot.Chatbot()
 
 # Routes
 """Test route to see if the program is responding correctly"""
@@ -22,10 +21,9 @@ def hello_world():
 returns msg_id as 0 or 1.
 0 = justification left and 1 = right"""
 @app.route('/api/chat', methods=['GET'])
-def send_chatbot():
-    global id
-    id = (id + 1 ) % 2 # ID for text justification (0=left)
-    items={'chatbot_txt': "This is text that is coming from flask", 'msg_id': f"{id}"}
+def send_chatbot(user_input: str):
+    bot_output = bot.chat(user_input)
+    items={'chatbot_txt': f"{bot_output}", 'msg_id': "0"}
     return jsonify(items), 200
 
 
