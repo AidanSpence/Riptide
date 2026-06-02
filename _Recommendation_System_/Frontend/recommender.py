@@ -31,4 +31,6 @@ class SongRecommender:
         scores = cosine_similarity(query_emb, self.embeddings)[0]
         top_k = np.argsort(scores)[::-1][:k]
 
-        return self.df.iloc[top_k][["title", "artist_name"]].reset_index(drop=True)
+        output = self.df.iloc[top_k][["title", "artist_name"]].reset_index(drop=True)
+
+        return output

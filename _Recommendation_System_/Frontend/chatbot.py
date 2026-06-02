@@ -3,6 +3,7 @@ import re
 import numpy as np
 import joblib
 from pathlib import Path
+from flask import jsonify
 
 from _Recommendation_System_.Frontend.recommender import SongRecommender
 
@@ -88,10 +89,6 @@ class Chatbot:
 
         self.number = (r'(\d+)\s*song')
 
-    def start(self):
-        print("Welcome To Riptide.")
-        self.chat()
-
     def detect_intent(self):
         if re.search(self.intent["help"], self.message):
             return self.help()
@@ -130,14 +127,14 @@ class Chatbot:
             return number.group(1)  # Returns only the number portion
         return None
 
-    def chat(self):
-        while True:
-            self.message = input().lower()
-            self.detect_intent()
+    def chat(self, user_input: str):
+        self.message = user_input.lower()
+        output = self.detect_intent()
+        return output
 
     def help(self):
         response = "Ask me to 'Create a _____ playlist'" # MAKE A BETTER VERSION OF THIS
-        print(response)
+        return response
 
     def recommend(self):
         goal = self.detect_goal()
@@ -159,13 +156,15 @@ class Chatbot:
             k_val = 10
         
         results = self.recommender.recommend(query_vector, k=k_val)
-        print(results)
+        return results
 
     def confused(self):
         response = "Sorry I don't understand, Type 'Help' for more options."
-        print(response)
+        return random.choice(response)
 
 
 if __name__ == "__main__":
     bot = Chatbot()
-    bot.start()
+    out = bot.chat()
+    print(out)
+    
