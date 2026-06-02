@@ -1,5 +1,5 @@
-import random
 import re
+import random
 import numpy as np
 import joblib
 from pathlib import Path
@@ -43,13 +43,20 @@ class Dialog_Manager:
             mood_dict = self.mood_weights[self.mood]
             mood_vec = np.array([mood_dict[f] for f in self.FEATURES])
         else:
-            mood_vec = np.mean([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()], axis=0)
+            map_min = min([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()])
+            map_max = max([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()])
+            for i in map_min:
+                mood_vec.append(random.randint(map_min[i],map_max[i]))
+            
 
         if self.style in self.style_weights:
             style_dict = self.style_weights[self.style]
             style_vec = np.array([style_dict[f] for f in self.FEATURES])
         else:
-            style_vec = np.mean([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()], axis=0)
+            map_min = min([[d[f] for f in self.FEATURES] for d in self.style_weights.values()])
+            map_max = max([[d[f] for f in self.FEATURES] for d in self.style_weights.values()])
+            for i in map_min:
+                style_vec.append(random.randint(map_min[i],map_max[i]))
 
         return mood_vec, style_vec
 
@@ -78,7 +85,7 @@ class Chatbot:
 
         self.goal = {
             'playlist': r'playlist|new playlist',
-            'new_song': r'new song|song| something new',
+            'new_song': r'new song|song|something new',
         }
 
         self.style = (r'car|run|workout|sleep|dance|sport|party|study')
@@ -128,13 +135,35 @@ class Chatbot:
         return None
 
     def chat(self, user_input: str):
-        self.message = user_input.lower()
+        #self.message = user_input.lower()
+        self.message = input().lower()
         output = self.detect_intent()
         return output
 
     def help(self):
-        response = "Ask me to 'Create a _____ playlist'" # MAKE A BETTER VERSION OF THIS
-        return response
+        return """
+I can help you discover and refine music based on your preferences.
+
+You can ask me to:
+- Recommend music (e.g. "recommend a playlist", "suggest songs")
+- Create something new (e.g. "make a workout playlist")
+
+You can specify:
+- Goal: playlist, new song
+- Style: workout, study, sleep, party, run, etc.
+- Mood: happy, sad, chill, energetic, focus, relax
+- Genre: rock, pop, rap, hip hop, jazz, edm, classical
+- Number of songs: e.g. "10 songs"
+
+Examples:
+- "Recommend a chill study playlist"
+- "Make a happy pop playlist with 15 songs"
+- "Suggest a new rock song"
+- "Improve this playlist to be more energetic"
+
+Type "help" anytime to see this again.
+"""
+#- Improve results (e.g. "make it more energetic", "adjust the mood")
 
     def recommend(self):
         goal = self.detect_goal()
@@ -159,12 +188,19 @@ class Chatbot:
         return results
 
     def confused(self):
-        response = "Sorry I don't understand, Type 'Help' for more options."
-        return random.choice(response)
+        return """
+I’m not sure what you mean.
+
+Try asking for:
+- A recommendation (e.g. "recommend a playlist")
+- A specific type of music (e.g. "happy workout playlist")
+- An improvement (e.g. "make it more chill")
+
+Type "help" to see all options."""
 
 
 if __name__ == "__main__":
     bot = Chatbot()
-    out = bot.chat()
+    out = bot.chat("make a playlist")
     print(out)
     
