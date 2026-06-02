@@ -16,15 +16,8 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 
-# ROUTES FOR INTERNAL CALLS (E.G HTML AND AI BACKEND)
-"""This returns chat content as chatbot_txt:text, and 
-returns msg_id as 0 or 1.
-0 = justification left and 1 = right"""
-@app.route('/api/chat', methods=['GET'])
-def send_chatbot(user_input: str):
-    bot_output = bot.chat(user_input)
-    items={'chatbot_txt': f"{bot_output}", 'msg_id': "0"}
-    return jsonify(items), 200
+
+
 
 
 """Passes playlist info as a list of json, with the values:
@@ -46,6 +39,42 @@ def send_playlist():
     return jsonify(items), 200
 
 
+
+
+"""
+This route will recieve data from the website as user_input, 
+which will then be passed into the chatbot
+"""
+@app.route('/api/input', methods=['POST'])
+def get_response():
+    print("anything at all?")
+    print("Raw JSON:", request.get_json())
+
+    recieved = request.get_json()
+
+    if not recieved:
+        return jsonify({"error": "No JSON received"}), 400
+
+    user_input = recieved.get('user_txt')
+    print("user_input:", user_input)
+
+    if not user_input:
+        print("ahhhh no user_txt")
+        return jsonify({"error": "user_txt missing"}), 400
+
+    print("found it", user_input)
+    # 1. Pass the user input directly into your bot instance logic
+    bot_output = bot.chat(user_input)
+
+    # 2. Structure the payload exactly like your old 'send_chatbot' route did
+    response_data = {
+        'chatbot_txt': f"{bot_output}", 
+        'msg_id': "0"
+    }
+
+    # 3. Return the bot data back to the frontend website
+    return jsonify(response_data), 200
+    
 
 #ROUTES FOR EXTERNAL API (E.G SPOTIFY AND SENSTIVE DATA)
 
