@@ -180,7 +180,7 @@ async function getChatBoxText() {
 
 async function sendChatBoxText() {
     let tosend = getChatBoxText();
-    fetch(`${}api/chat/input`)
+    fetch(`${BACKEND_ADDRESS}api/chat/input`)
 }
 
 
