@@ -25,8 +25,7 @@ function sendButtonCreate() {
     sendButton.id = "send-button";
 
     sendButton.addEventListener('click', () => { // listener
-        // This needs to be changed to chatSendFlask --------------------------------------------------------------------
-        loadChatFlask()
+        sendChatBoxText()
     });
 
     chatbox.appendChild(sendButton);
@@ -179,8 +178,29 @@ async function getChatBoxText() {
 }
 
 async function sendChatBoxText() {
-    let tosend = getChatBoxText();
-    fetch(`${BACKEND_ADDRESS}api/chat/input`)
+    const tosend = await getChatBoxText();
+
+    console.log(tosend);
+    console.log(typeof tosend);
+    try {
+        const response = await fetch(`${BACKEND_ADDRESS}api/input`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_txt: tosend
+            })
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+
+    } catch (error) {
+        console.error("Error sending message:", error);
+    }
+    
 }
 
 
@@ -211,7 +231,6 @@ async function navButtonsListen() {
     });
     infoButton.addEventListener('click', () => { // listener
         console.log("info button clicked")
-        getChatBoxText()
     });
     loginButton.addEventListener('click', () => { // listener
         console.log("login button clicked")
