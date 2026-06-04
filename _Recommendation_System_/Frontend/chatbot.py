@@ -18,36 +18,33 @@ class Dialog_Manager:
         self.genre = genre.group(0) if genre else None
         self.text = message
         self.mood_weights = {
-            "happy" : {"tempo": 125, "key": 9, "loudness": 0.75, "mode": 1},
-            "sad" : {"tempo": 70, "key": 2, "loudness": 0.35, "mode": 0},
-            "chill" : {"tempo": 90, "key": 7, "loudness": 0.45, "mode": 1},
-            "relax" : {"tempo": 60, "key": 5, "loudness": 0.25, "mode": 1},
-            "energetic" : {"tempo": 140, "key": 10, "loudness": 0.9, "mode": 1},
-            "party" : {"tempo": 128, "key": 11, "loudness": 0.95, "mode": 1},
-            "focus" : {"tempo": 85, "key": 6, "loudness": 0.4, "mode": 1},
+            "happy" : {"tempo": 212.47, "key": 9, "loudness": -12.34, "mode": 1},
+            "sad" : {"tempo": 58.22, "key": 2, "loudness": -38.67, "mode": 0},
+            "chill" : {"tempo": 96.55, "key": 6, "loudness": -28.91, "mode": 1},
+            "relax" : {"tempo": 44.19, "key": 4, "loudness": -42.77, "mode": 1},
+            "energetic" : {"tempo": 187.63, "key": 10, "loudness": -6.58, "mode": 1},
+            "party" : {"tempo": 171.88, "key": 11, "loudness": -3.92, "mode": 1},
+            "focus" : {"tempo": 82.34, "key": 6, "loudness": -30.12, "mode": 1},
         }
+
         self.style_weights = {
-            "car" : {"tempo": 80, "key": 5, "loudness": 0.4, "mode": 1},
-            "run" : {"tempo": 150, "key": 10, "loudness": 0.9, "mode": 1},
-            "workout" : {"tempo": 140, "key": 10, "loudness": 0.9, "mode": 1},
-            "sleep" : {"tempo": 50, "key": 3, "loudness": 0.15, "mode": 0},
-            "dance" : {"tempo": 128, "key": 11, "loudness": 0.95, "mode": 1},
-            "sport" : {"tempo": 145, "key": 10, "loudness": 0.92, "mode": 1},
-            "party" : {"tempo": 128, "key": 11, "loudness": 0.98, "mode": 1},
-            "study" : {"tempo": 85, "key": 6, "loudness": 0.35, "mode": 1},
+            "car" : {"tempo": 76.41, "key": 5, "loudness": -33.55, "mode": 1},
+            "run" : {"tempo": 198.72, "key": 10, "loudness": -5.73, "mode": 1},
+            "workout" : {"tempo": 176.29, "key": 9, "loudness": -7.11, "mode": 1},
+            "sleep" : {"tempo": 32.67, "key": 2, "loudness": -46.92, "mode": 0},
+            "dance" : {"tempo": 162.45, "key": 10, "loudness": -4.36, "mode": 1},
+            "sport" : {"tempo": 183.90, "key": 9, "loudness": -6.84, "mode": 1},
+            "party" : {"tempo": 169.77, "key": 11, "loudness": -2.95, "mode": 1},
+            "study" : {"tempo": 88.13, "key": 5, "loudness": -31.67, "mode": 1},
         }
         self.FEATURES = ["tempo", "key", "loudness", "mode"]
 
     def apply_map(self):
-        temp_vec = []
         if self.mood in self.mood_weights:
             mood_dict = self.mood_weights[self.mood]
             mood_vec = np.array([mood_dict[f] for f in self.FEATURES])
         else:
-            weights_matrix = np.array([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()])
-            map_min = weights_matrix.min()
-            map_max = weights_matrix.max()
-            mood_vec = np.random.uniform(map_max,map_min)
+            mood_vec = np.array([round(random.uniform(10,300), 2), random.randint(0,11), round(random.uniform(-50,0), 2), random.randint(0,1)])
         print(mood_vec)
             
 
@@ -55,10 +52,7 @@ class Dialog_Manager:
             style_dict = self.style_weights[self.style]
             style_vec = np.array([style_dict[f] for f in self.FEATURES])
         else:
-            weights_matrix = np.array([[d[f] for f in self.FEATURES] for d in self.style_weights.values()])
-            map_min = weights_matrix.min()
-            map_max = weights_matrix.max()
-            style_vec = np.random.uniform(map_max,map_min)
+            style_vec = np.array([round(random.uniform(10,300), 2), random.randint(0,11), round(random.uniform(-50,0), 2), random.randint(0,1)])
         print(style_vec)
 
         return mood_vec, style_vec
@@ -67,7 +61,7 @@ class Dialog_Manager:
 
         mood_vec, style_vec = self.apply_map()
 
-        final_vec = 0.5 * mood_vec + 0.2 * style_vec
+        final_vec = 0.5 * mood_vec + 0.5 * style_vec
         final_vec[0] /= 200.0  # Normalise tempo
         final_vec[1] /= 11.0 # Normalise key
 
@@ -139,14 +133,12 @@ class Chatbot:
 
     def chat(self, user_input: str):
         self.message = user_input.lower()
-        # self.message = input().lower()
-        # output = self.detect_intent()
-        output = "yes"
+        #self.message = input().lower()
+        output = self.detect_intent()
         return output
 
     def help(self):
-        return """
-I can help you discover and refine music based on your preferences.
+        return """I can help you discover and refine music based on your preferences.
 
 You can ask me to:
 - Recommend music (e.g. "recommend a playlist", "suggest songs")
@@ -192,13 +184,11 @@ Type "help" anytime to see this again.
         return results
 
     def confused(self):
-        return """
-I’m not sure what you mean.
+        return """I’m not sure what you mean.
 
 Try asking for:
 - A recommendation (e.g. "recommend a playlist")
 - A specific type of music (e.g. "happy workout playlist")
-- An improvement (e.g. "make it more chill")
 
 Type "help" to see all options."""
 
