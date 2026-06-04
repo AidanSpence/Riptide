@@ -138,8 +138,8 @@ class Chatbot:
         return None
 
     def chat(self, user_input: str):
-        #self.message = user_input.lower()
-        self.message = input().lower()
+        self.message = user_input.lower()
+        # self.message = input().lower()
         # output = self.detect_intent()
         output = "yes"
         return output

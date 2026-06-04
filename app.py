@@ -45,7 +45,7 @@ def send_playlist():
 This route will recieve data from the website as user_input, 
 which will then be passed into the chatbot
 """
-@app.route('/api/input', methods=['POST'])
+@app.route('/api/chat', methods=['POST'])
 def get_response():
     print("anything at all?")
     print("Raw JSON:", request.get_json())
@@ -63,16 +63,16 @@ def get_response():
         return jsonify({"error": "user_txt missing"}), 400
 
     print("found it", user_input)
-    # 1. Pass the user input directly into your bot instance logic
+    
     bot_output = bot.chat(user_input)
-
-    # 2. Structure the payload exactly like your old 'send_chatbot' route did
+    print(bot_output)
+    
     response_data = {
         'chatbot_txt': f"{bot_output}", 
         'msg_id': "0"
     }
 
-    # 3. Return the bot data back to the frontend website
+    
     return jsonify(response_data), 200
     
 

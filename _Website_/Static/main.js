@@ -25,7 +25,7 @@ function sendButtonCreate() {
     sendButton.id = "send-button";
 
     sendButton.addEventListener('click', () => { // listener
-        sendChatBoxText()
+        flaskChatSendResponse()
     });
 
     chatbox.appendChild(sendButton);
@@ -128,31 +128,17 @@ async function loadPlaylists() {
     });
 }
 
-async function loadChat(){
+async function loadChat(text, id){
     /* This is for loading previous chats, it takes an input from flask */
     
     let chathtml = "";
-    let id = 0;
-    let text = "Error loading chat, backend 404?" // THIS NEEDS CHANGING LATER, JUST BEST TO BE LEFT FOR TESTING FOR NOW
     const chatItem = document.createElement("p");
 
     const chatContainer = document.getElementById("chatbox-window");
 
+
+
     try {
-        const response = await fetch(`${BACKEND_ADDRESS}api/chat`);
-        const data = await response.json();
-        console.log("Chatbot Flask");
-        console.log(data.chatbot_txt);
-        console.log(data.msg_id);
-        text = data.chatbot_txt;
-        id = data.msg_id;
-        
-    } 
-    catch (error) {
-        console.error('Error fetching data:', error);
-    }
-    finally
-    {
         chatItem.className = "chat-item";
         chathtml += `<p>${text}</p>`
 
@@ -168,6 +154,8 @@ async function loadChat(){
 
         chatContainer.appendChild(chatItem)
     }
+    catch (error) {
+        console.error('Error fetching data:', error);}
 }
 
 
@@ -177,13 +165,15 @@ async function getChatBoxText() {
     return box_text
 }
 
-async function sendChatBoxText() {
-    const tosend = await getChatBoxText();
 
-    console.log(tosend);
-    console.log(typeof tosend);
+
+async function flaskChatSendResponse() {
+    const tosend = await getChatBoxText();
+    loadChat(tosend, 1)
+    console.log(`Sent: `,tosend);
+
     try {
-        const response = await fetch(`${BACKEND_ADDRESS}api/input`, {
+        const response = await fetch(`${BACKEND_ADDRESS}api/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -194,8 +184,12 @@ async function sendChatBoxText() {
         });
 
         const data = await response.json();
-
+        console.log(`recieved: ${data}`)
         console.log(data);
+        if (data)
+            console.log(data.msg_id)
+            console.log(data.chatbot_txt)
+            loadChat(data.chatbot_txt, data.msg_id)
 
     } catch (error) {
         console.error("Error sending message:", error);
