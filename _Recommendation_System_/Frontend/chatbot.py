@@ -39,24 +39,27 @@ class Dialog_Manager:
         self.FEATURES = ["tempo", "key", "loudness", "mode"]
 
     def apply_map(self):
+        temp_vec = []
         if self.mood in self.mood_weights:
             mood_dict = self.mood_weights[self.mood]
             mood_vec = np.array([mood_dict[f] for f in self.FEATURES])
         else:
-            map_min = min([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()])
-            map_max = max([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()])
-            for i in map_min:
-                mood_vec.append(random.randint(map_min[i],map_max[i]))
+            weights_matrix = np.array([[d[f] for f in self.FEATURES] for d in self.mood_weights.values()])
+            map_min = weights_matrix.min()
+            map_max = weights_matrix.max()
+            mood_vec = np.random.uniform(map_max,map_min)
+        print(mood_vec)
             
 
         if self.style in self.style_weights:
             style_dict = self.style_weights[self.style]
             style_vec = np.array([style_dict[f] for f in self.FEATURES])
         else:
-            map_min = min([[d[f] for f in self.FEATURES] for d in self.style_weights.values()])
-            map_max = max([[d[f] for f in self.FEATURES] for d in self.style_weights.values()])
-            for i in map_min:
-                style_vec.append(random.randint(map_min[i],map_max[i]))
+            weights_matrix = np.array([[d[f] for f in self.FEATURES] for d in self.style_weights.values()])
+            map_min = weights_matrix.min()
+            map_max = weights_matrix.max()
+            style_vec = np.random.uniform(map_max,map_min)
+        print(style_vec)
 
         return mood_vec, style_vec
 
@@ -137,7 +140,8 @@ class Chatbot:
     def chat(self, user_input: str):
         #self.message = user_input.lower()
         self.message = input().lower()
-        output = self.detect_intent()
+        # output = self.detect_intent()
+        output = "yes"
         return output
 
     def help(self):
