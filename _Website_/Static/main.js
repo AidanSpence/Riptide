@@ -7,9 +7,10 @@ const menuUpPath = "assets/arrowUp.svg";
 const menuDownPath = "assets/arrowDown.svg";
 
 const sendButtonPath = "assets/send.svg";
+
 const BACKEND_ADDRESS = "http://localhost:5000/" // PRODUCTION ADDRESS, MAYBE I GET FROM ENV VAR LATER?
 
-
+const username = document.getElementById("userName")
 
 
 
@@ -160,7 +161,7 @@ async function loadChat(text, id){
 
 
 async function getChatBoxText() {
-    let box_text = document.getElementById("chatbox-input").value
+    let box_text = document.getElementById("chatboxinput").value
     console.log(box_text)
     return box_text
 }
@@ -169,38 +170,43 @@ async function getChatBoxText() {
 
 async function flaskChatSendResponse() {
     const tosend = await getChatBoxText();
-    loadChat(tosend, 1)
-    console.log(`Sent: `,tosend);
+    if (tosend != "")
+    {
+        loadChat(tosend, 1)
+        document.getElementById('chatboxinput').value = ""
+        console.log(`Sent: `,tosend);
 
-    try {
-        const response = await fetch(`${BACKEND_ADDRESS}api/chat`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                user_txt: tosend
-            })
-        });
+        try {
+            const response = await fetch(`${BACKEND_ADDRESS}api/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_txt: tosend
+                })
+            });
 
-        const data = await response.json();
-        console.log(`recieved: ${data}`)
-        console.log(data);
-        if (data)
-            console.log(data.msg_id)
-            console.log(data.chatbot_txt)
-            loadChat(data.chatbot_txt, data.msg_id)
+            const data = await response.json();
+            console.log(`recieved: ${data}`)
+            console.log(data);
+            if (data)
+                console.log(data.msg_id)
+                console.log(data.chatbot_txt)
+                loadChat(data.chatbot_txt, data.msg_id)
 
-    } catch (error) {
-        console.error("Error sending message:", error);
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
     }
-    
 }
 
 
 async function init() {
     iconCreate();
     sendButtonCreate();
+    textAreaHandler()
+    username.textContent = "George"
 }
 
 // refreshes the playlists, in a function for when additional functionality required
@@ -215,11 +221,24 @@ async function infoPopup() {
     
 }
 
+function textAreaHandler() {
+
+    document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                flaskChatSendResponse();
+                document.getElementById('chatboxinput').value = ""
+            }
+        });
+}
+
+
 async function navButtonsListen() {
 
     const playlistButton = document.getElementById("playlistsButton");
     const infoButton = document.getElementById("infoButton");
     const loginButton = document.getElementById("loginButton");
+    const chatButton = document.getElementById("chatButton");
     playlistButton.addEventListener('click', () => { // listener
         console.log("playlist button clicked")
     });
@@ -228,6 +247,9 @@ async function navButtonsListen() {
     });
     loginButton.addEventListener('click', () => { // listener
         console.log("login button clicked")
+    });
+        chatButton.addEventListener('click', () => { // listener
+        console.log("Chats button clicked")
     });
 }
 

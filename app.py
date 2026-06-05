@@ -31,8 +31,8 @@ def send_playlist():
                 "duration": "1H 30M"
             },
             {
-                "title": "Generic playlist 2 flask",
-                "duration": "45M"
+                "title": "Genericplaylistflaskbutthenameisreally long and will overflow really badly",
+                "duration": "1H 45M"
             }
         ]
     }
