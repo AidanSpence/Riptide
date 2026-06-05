@@ -12,10 +12,11 @@ MODELS_PATH = PROJECT_ROOT / "models"
 
 
 class Dialog_Manager:
-    def __init__(self, style, mood, genre, message):
+    def __init__(self, style, mood, message, genre=None):
         self.style = style.group(0) if style else None
         self.mood = mood.group(0) if mood else None
-        self.genre = genre.group(0) if genre else None
+        #self.genre = genre.group(0) if genre else None
+        self.df = joblib.load(MODELS_PATH / "df.jb")
         self.text = message
         self.mood_weights = {
             "happy" : {"tempo": 212.47, "key": 9, "loudness": -12.34, "mode": 1},
@@ -56,11 +57,17 @@ class Dialog_Manager:
         print(style_vec)
 
         return mood_vec, style_vec
+    
+    def find_genre(self):
+        genres = self.df['artist_terms'].strip().unique()
+        genre = re.search(list(genres), self.message)
+        return genre
 
     def dialog_manager(self):
 
         mood_vec, style_vec = self.apply_map()
 
+        self.find_genre()
         final_vec = 0.5 * mood_vec + 0.5 * style_vec
         final_vec[0] /= 200.0  # Normalise tempo
         final_vec[1] /= 11.0 # Normalise key
@@ -75,21 +82,21 @@ class Chatbot:
         self.vectorizer = joblib.load(MODELS_PATH / "vectorizer.jb")
         self.message = " "
         self.intent = {
-            'help': r'help|assist|support|how (do|to)|what can you do|commands|options',
-            'recommend': r'recommend|suggest|find|give me|make|create|build',
-            'improve': r'improve|better|refine|adjust|tune',
+            'help': r'\b(help|assist|support|how (do|to)|what can you do|commands|options)\b',
+            'recommend': r'\b(recommend|suggest|find|give me|make|create|build)\b',
+            'improve': r'\b(improve|better|refine|adjust|tune)\b',
         }
 
         self.goal = {
-            'playlist': r'playlist|new playlist',
-            'new_song': r'new song|song|something new',
+            'playlist': r'\b(playlist|new playlist)\b',
+            'new_song': r'\b(new song|song|something new)\b',
         }
 
-        self.style = (r'car|run|workout|sleep|dance|sport|party|study')
+        self.style = (r'\b(car|run|workout|sleep|dance|sport|party|study)\b')
 
-        self.moods = (r'happy|sad|chill|relax|energetic|party|focus')
+        self.moods = (r'\b(happy|sad|chill|relax|energetic|party|focus)\b')
 
-        self.genres = (r'rock|pop|rap|hip hop|jazz|edm|classical')
+        # self.genres = (r'rock|pop|rap|hip hop|jazz|edm|classical')
 
         self.number = (r'(\d+)\s*song')
 
@@ -120,9 +127,9 @@ class Chatbot:
         mood = re.search(self.moods, self.message)
         return mood
 
-    def detect_genre(self):
-        genre = re.search(self.genres, self.message)
-        return genre
+    # def detect_genre(self):
+    #     genre = re.search(self.genres, self.message)
+    #     return genre
     
     def extract_number(self):
         number = re.search(self.number, self.message)
@@ -132,8 +139,8 @@ class Chatbot:
         return None
 
     def chat(self, user_input: str):
-        self.message = user_input.lower()
-        #self.message = input().lower()
+        #self.message = user_input.lower()#.strip("\n")
+        self.message = input().lower()
         output = self.detect_intent()
         return output
 
@@ -165,9 +172,9 @@ Type "help" anytime to see this again.
         goal = self.detect_goal()
         style = self.detect_style()
         mood = self.detect_mood()
-        genre = self.detect_genre()
+        #genre = self.detect_genre()
 
-        manager = Dialog_Manager(style, mood, genre, self.message)
+        manager = Dialog_Manager(style, mood, self.message) # genre
         request_text = manager.dialog_manager()
         text_vector = self.vectorizer.transform([self.message]).toarray()[0]
         query_vector = np.concatenate([request_text,text_vector])
