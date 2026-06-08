@@ -67,7 +67,7 @@ class Dialog_Manager:
 
         mood_vec, style_vec = self.apply_map()
 
-        self.find_genre()
+        #self.find_genre()
         final_vec = 0.5 * mood_vec + 0.5 * style_vec
         final_vec[0] /= 200.0  # Normalise tempo
         final_vec[1] /= 11.0 # Normalise key
@@ -139,8 +139,8 @@ class Chatbot:
         return None
 
     def chat(self, user_input: str):
-        #self.message = user_input.lower()#.strip("\n")
-        self.message = input().lower()
+        self.message = user_input.lower()#.strip("\n")
+        #self.message = input().lower()
         output = self.detect_intent()
         return output
 

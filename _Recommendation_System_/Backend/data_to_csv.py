@@ -19,7 +19,7 @@ def make_csv(files):
 
         writer = csv.writer(f)
         writer.writerow(["title",
-                        #"artist_name",
+                        "artist_name",
                         #"release",
                         "year",
                         "duration",
@@ -62,7 +62,7 @@ def make_csv(files):
             
             writer.writerow([
                     title.decode('UTF-8'), 
-                    #artist_name.decode('UTF-8'), 
+                    artist_name.decode('UTF-8'),
                     #release.decode('UTF-8'),
                     year, 
                     duration, 
