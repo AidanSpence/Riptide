@@ -1,12 +1,10 @@
 from flask import Flask, jsonify, request
 # This is required for correct custom port routing 
-from flask_cors import CORS
 
 from _Recommendation_System_.Frontend import chatbot
 
 # Variables
 app = Flask(__name__)
-CORS(app, origins=["*"]) 
 bot = chatbot.Chatbot()
 
 # Routes
@@ -87,4 +85,8 @@ def get_response():
 
 # Program run
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
