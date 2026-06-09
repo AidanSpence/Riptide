@@ -3,7 +3,7 @@ import random
 import numpy as np
 import joblib
 from pathlib import Path
-from flask import jsonify
+import pandas as pd
 
 from _Recommendation_System_.Frontend.recommender import SongRecommender
 
@@ -12,7 +12,15 @@ MODELS_PATH = PROJECT_ROOT / "models"
 
 
 class Dialog_Manager:
+    """
+    Manages user dialogue inputs and converts detected mood, style,
+    and genre information into a feature vector suitable for music
+    recommendation or prediction models.
+    """
     def __init__(self, style, mood, message, genre=None):
+        """
+        
+        """
         self.style = style.group(0) if style else None
         self.mood = mood.group(0) if mood else None
         #self.genre = genre.group(0) if genre else None
@@ -41,6 +49,17 @@ class Dialog_Manager:
         self.FEATURES = ["tempo", "key", "loudness", "mode"]
 
     def apply_map(self):
+        """
+        Create feature vectors for the selected mood and style
+
+        If the mood or style exists in the corresponding weight mappings,
+        the predefined feature values are used. Otherwise, random values 
+        are generated
+
+        Returns:
+            tuple[np.ndarray, np.ndarray]:
+                A tuple containing the mood vector and style vector
+        """
         if self.mood in self.mood_weights:
             mood_dict = self.mood_weights[self.mood]
             mood_vec = np.array([mood_dict[f] for f in self.FEATURES])
@@ -58,16 +77,59 @@ class Dialog_Manager:
 
         return mood_vec, style_vec
     
+    def extract_terms(text):
+        """
+        Extract quoted strings from a text value
+
+        Searches for content enclosed in either single or
+        double quotation marks.
+
+        Returns
+            list of extracted strings
+        """
+        if pd.isna(text):
+            return []
+        # Finds all strings
+        return re.findall(r"['\"](.*?)['\"]", str(text))
+
+
     def find_genre(self):
-        genres = self.df['artist_terms'].strip().unique()
-        genre = re.search(list(genres), self.message)
+        """
+        Search dataset for matching genre mentioned
+        in the user's message
+
+        If user inputted genre is found ***
+
+        Returns
+            vectorised genre
+        """
+        self.df['artist_terms_clean'] = self.df['artist_terms'].apply(self.extract_terms)
+
+        # Extract all unique values then Remove any blank empty strings caused by double quotes
+        # and sort by length so longer phrases match before shorter sub-words
+        unique_values = self.df['artist_terms_clean'].explode().dropna().unique()
+        unique_values = [term for term in unique_values if term.strip()]
+        unique_values.sort(key=len, reverse=True)
+
+        # Converts values into a searchable map
+        pattern = r'\b(' + '|'.join(map(re.escape, unique_values)) + r')\b'
+
+        genre = re.search(pattern, self.message)
         return genre
 
     def dialog_manager(self):
+        """
+        Generate a final audio-feature vector based on the user's
+        detected mood and style preferences
 
+        The mood and style vectors are averaged and selected
+        features are normalized before being returned
+
+        
+        """
         mood_vec, style_vec = self.apply_map()
+        genre_vec = self.find_genre()
 
-        #self.find_genre()
         final_vec = 0.5 * mood_vec + 0.5 * style_vec
         final_vec[0] /= 200.0  # Normalise tempo
         final_vec[1] /= 11.0 # Normalise key
@@ -76,7 +138,29 @@ class Dialog_Manager:
 
 
 class Chatbot:
+    """
+    Music recommendation chatbot that interprets user requests and
+    generates song or playlist recommendations based on goals,
+    moods, and activity styles.
+
+    To run chatbot
+        .chat(str)
+    """
     def __init__(self):
+        """
+        Initialize the chatbot and load all required models
+
+        Loads:
+        - Feature matrix used by the recommender
+        - Trained SongRecommender model
+        - Text vectorizer
+
+        Initializes:
+        - Intent detection patterns
+        - Goal detection patterns
+        - Style and mood patterns
+        - Song count extraction pattern
+        """
         self.X =joblib.load(MODELS_PATH / "X_final.jb")
         self.recommender = SongRecommender(input_dim=self.X.shape[1], device="cpu")
         self.vectorizer = joblib.load(MODELS_PATH / "vectorizer.jb")
@@ -96,11 +180,18 @@ class Chatbot:
 
         self.moods = (r'\b(happy|sad|chill|relax|energetic|party|focus)\b')
 
-        # self.genres = (r'rock|pop|rap|hip hop|jazz|edm|classical')
-
         self.number = (r'(\d+)\s*song')
 
     def detect_intent(self):
+        """
+        Determines user's primary intent
+
+        Run's the appropriate method for handling
+        users message
+
+        Returns
+            str from appropriate method
+        """
         if re.search(self.intent["help"], self.message):
             return self.help()
 
@@ -110,6 +201,14 @@ class Chatbot:
         return self.confused()
     
     def detect_goal(self):
+        """
+        Detect the recommendation goal
+
+        Returns
+            0 : Playlist recommendation
+            1 : Single song recommendation
+            None : No goal detected
+        """
         for key,value in self.goal.items():
             goal = key
             pattern = value
@@ -120,18 +219,34 @@ class Chatbot:
                 return 1
             
     def detect_style(self):
+        """
+        Detect an activity or usage context from the user message
+        Returns
+            Regex match object if a style is found,
+            otherwise None
+        """
         style = re.search(self.style, self.message)
         return style
             
     def detect_mood(self):
+        """
+        Detect the user's desired mood from message
+
+        Returns
+            Regex match object if a mood is found,
+            otherwise None
+        """
         mood = re.search(self.moods, self.message)
         return mood
-
-    # def detect_genre(self):
-    #     genre = re.search(self.genres, self.message)
-    #     return genre
     
     def extract_number(self):
+        """
+        Extract the requested number of songs
+
+        Returns
+            Extracted numeric value as a string,
+            or None if no number is found
+        """
         number = re.search(self.number, self.message)
     
         if number:
@@ -139,12 +254,59 @@ class Chatbot:
         return None
 
     def chat(self, user_input: str):
-        self.message = user_input.lower()#.strip("\n")
+        """
+        Processes a user message and generates a response.
+
+        The input text is converted to lowercase and stored
+        before intent detection is performed.
+
+        Returns
+            output <-- Chatbot response
+        """
+        self.message = user_input.lower()
         #self.message = input().lower()
         output = self.detect_intent()
         return output
 
+    def recommend(self):
+        """
+        Generate song recommendations from the user's request.
+
+        Detects goal, mood, and style to build a structured query representation.
+        Vectorizes the user's message and combines feature vectors then
+        generates recommendations using the recommender
+
+        Returns 
+            Recommendation
+        """
+        goal = self.detect_goal()
+        style = self.detect_style()
+        mood = self.detect_mood()
+        #genre = self.detect_genre()
+
+        manager = Dialog_Manager(style, mood, self.message) # genre
+        request_text = manager.dialog_manager()
+        text_vector = self.vectorizer.transform([self.message]).toarray()[0]
+        query_vector = np.concatenate([request_text,text_vector])
+
+        if goal == 0:
+            length = self.extract_number()
+            k_val = int(length) if length is not None else 10
+        elif goal == 1:
+            k_val = 1
+        else:
+            k_val = 10
+        
+        results = self.recommender.recommend(query_vector, k=k_val)
+        return results
+    
     def help(self):
+        """
+        Returns the Chatbot help message
+
+        Returns
+            str
+        """
         return """I can help you discover and refine music based on your preferences.
 
 You can ask me to:
@@ -168,29 +330,14 @@ Type "help" anytime to see this again.
 """
 #- Improve results (e.g. "make it more energetic", "adjust the mood")
 
-    def recommend(self):
-        goal = self.detect_goal()
-        style = self.detect_style()
-        mood = self.detect_mood()
-        #genre = self.detect_genre()
-
-        manager = Dialog_Manager(style, mood, self.message) # genre
-        request_text = manager.dialog_manager()
-        text_vector = self.vectorizer.transform([self.message]).toarray()[0]
-        query_vector = np.concatenate([request_text,text_vector])
-
-        if goal == 0:
-            length = self.extract_number()
-            k_val = int(length) if length is not None else 10
-        elif goal == 1:
-            k_val = 1
-        else:
-            k_val = 10
-        
-        results = self.recommender.recommend(query_vector, k=k_val)
-        return results
-
     def confused(self):
+        """
+        Returns a Chatbot fallback response when users message is 
+        not understood
+
+        Returns
+            str
+        """
         return """I’m not sure what you mean.
 
 Try asking for:
