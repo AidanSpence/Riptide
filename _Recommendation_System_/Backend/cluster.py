@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 # constants
 #TEXT_COLUMNS = ["title","artist_name","release","artist_terms","similar_artists","location"]
-TEXT_COLUMNS = ["title","artist_terms"]
+TEXT_COLUMNS = ["title","artist_name","artist_terms"]
 NUMERIC_COLUMNS = ["duration","tempo","loudness","key","mode","time_signature"]
 
 SAVE_DIR  = "_Recommendation_System_\\models"
