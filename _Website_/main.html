@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+    
 <title>Riptide</title>
 <head>
     <meta charset="utf-8">
@@ -12,7 +13,17 @@
     <!-- Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link
+        rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'"
+    >
+    <noscript>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+    </noscript>
 </head>
 
 
@@ -23,7 +34,7 @@
 
 
     <nav class="header-bar">  <!-- Can also be used as a navigation bar later -->
-
+        <p class ="header-text">Riptide</p>
     </nav>
 
     <div class="info-popup-box" id="infoPopupBox" style="display: none;"> <!--HIDDEN for now AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-->
@@ -42,13 +53,18 @@
 
                 <div class="user-icon" id="userIcon">
 
-                </div>
+                </div> 
 
+                <div class="user-name" id="userName"></div>
+                
                 <div class="playlists-button nav-button" id="playlistsButton"> 
                     <button id="playlistsButton" style="display: none;"></button>
                     <div class="button-text"> Playlists </div>  
                 </div>
-
+                <div class="chat-button nav-button" id="chatButton"> 
+                    <button id="chatButton" style="display: none;"></button>
+                    <div class="button-text"> Chats </div>  
+                </div>
                 <div class="info-button nav-button" id="infoButton"> 
                     <button id="infoButton" style="display: none;"></button>
                     <div class="button-text"> Info </div> 
@@ -74,7 +90,7 @@
 
             </div>
             <div class="chatbox-input-box" id = "chatbox-input-box">
-                <textarea name="chatbox" class = "chatbox-input" id = "chatbox-input"></textarea>
+                <textarea name="chatbox" class = "chatbox-input" id = "chatboxinput" placeholder="Write your message here..."></textarea>
                 <div class="chatbot-input-button" id="chatbot-input-button">
                 <!--Send button image is placed here-->
                 </div>
