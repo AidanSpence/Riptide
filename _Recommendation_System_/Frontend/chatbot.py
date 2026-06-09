@@ -128,7 +128,7 @@ class Dialog_Manager:
         
         """
         mood_vec, style_vec = self.apply_map()
-        genre_vec = self.find_genre()
+        #genre_vec = self.find_genre()
 
         final_vec = 0.5 * mood_vec + 0.5 * style_vec
         final_vec[0] /= 200.0  # Normalise tempo
