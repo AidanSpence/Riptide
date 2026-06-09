@@ -21,21 +21,35 @@ class SongRecommender:
         self.embeddings = npz_file['embeddings']
         self.df = joblib.load(MODELS_PATH / "df.jb")
 
-    def recommend(self, query_vector, k=10):
+    def recommend(self, query_vector, k=10, temperature=0.1):
         with torch.no_grad():
             print("in recommend")
             q = torch.tensor(query_vector, dtype=torch.float32).unsqueeze(0)
-            q_sliced = q[:,:518]
+
+            noise = torch.randn_like(q) * temperature
+            q_noisy = q + noise
+
+            q_sliced = q_noisy[:,:518]
             query_emb = self.model(q_sliced.to(self.device)).cpu().numpy()
 
         # similarity ranking
+        N = 100
         scores = cosine_similarity(query_emb, self.embeddings)[0]
-        top_k = np.argsort(scores)[::-1][:k]
+        top_n = np.argsort(scores)[::-1][:N]
 
-        subset = self.df.iloc[top_k].reset_index(drop=True)
-        output = pd.DataFrame()
+        top_scores = scores[top_n]
+        probs = top_scores / top_scores.sum()
 
-        output['Title'] = subset['title']
-        output['Artist'] = subset['artist_name']
+        chosen = np.random.choice(top_n, size=k, replace=False, p=probs)
 
-        return output.to_string()
+        subset = self.df.iloc[chosen].reset_index(drop=True)
+
+        output = pd.DataFrame({
+            'Title': subset['title'],
+            'Artist': subset['artist_name']
+        })
+
+        return output.to_html(
+            classes='recommendation-table',
+            index=False
+        )
