@@ -19,7 +19,7 @@ def make_csv(files):
 
         writer = csv.writer(f)
         writer.writerow(["title",
-                        #"artist_name",
+                        "artist_name",
                         #"release",
                         "year",
                         "duration",
@@ -58,9 +58,11 @@ def make_csv(files):
             similar_artists = g.get_similar_artists(h5)
             location = g.get_artist_location(h5)
 
+            clean_artist_terms = artist_terms.astype(str)
+            
             writer.writerow([
                     title.decode('UTF-8'), 
-                    #artist_name.decode('UTF-8'), 
+                    artist_name.decode('UTF-8'),
                     #release.decode('UTF-8'),
                     year, 
                     duration, 
@@ -73,7 +75,7 @@ def make_csv(files):
                     mode, 
                     end_of_fade_in, 
                     start_of_fade_out, 
-                    artist_terms, 
+                    clean_artist_terms, 
                     #similar_artists, 
                     #location.decode('UTF-8')
                     ])

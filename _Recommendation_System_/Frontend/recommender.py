@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import joblib
+import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from _Recommendation_System_.Backend.model import TripletNet
 from pathlib import Path
@@ -31,4 +32,10 @@ class SongRecommender:
         scores = cosine_similarity(query_emb, self.embeddings)[0]
         top_k = np.argsort(scores)[::-1][:k]
 
-        return self.df.iloc[top_k][["title", "artist_name"]].reset_index(drop=True)
+        subset = self.df.iloc[top_k].reset_index(drop=True)
+        output = pd.DataFrame()
+
+        output['Title'] = subset['title']
+        output['Artist'] = subset['artist_name']
+
+        return output.to_string()
