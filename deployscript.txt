@@ -1,0 +1,1 @@
+eb create --single --instance-type t3.medium --verbose should-work-test-1
