@@ -1,25 +1,27 @@
+// Global Confguration
+const BACKEND_ADDRESS = "0.0.0.0:5000/"
+
 const playlist = []
 
-const userIconPath = "assets/userIcon.svg";
+const paths = {
+    userIcon: "assets/userIcon.svg",
+    menuUp: "assets/arrowUp.svg",
+    menuDown: "assets/arrowDown.svg",
+    sendButton: "assets/send.svg"
+};
 
-const menuUpPath = "assets/arrowUp.svg";
-
-const menuDownPath = "assets/arrowDown.svg";
-
-const sendButtonPath = "assets/send.svg";
-
-const BACKEND_ADDRESS = "0.0.0.0:5000/" // PRODUCTION ADDRESS, MAYBE I GET FROM ENV VAR LATER?
-
+// State Elements
 const username = document.getElementById("userName")
 
-
+// ==========================================
+// UI Components
+// ==========================================
 
 function sendButtonCreate() {
-/* This creates both the button and also contains the listner for the button */
     const chatbox = document.getElementById("chatbot-input-button");
+    if (!chatbox) return;
 
     const sendButton = document.createElement("img");
-
     sendButton.src = sendButtonPath;
     sendButton.alt = "Send Button";
     sendButton.classList.add("send-button");
@@ -33,46 +35,53 @@ function sendButtonCreate() {
 }
 
 function iconCreate(){
+    const iconContainer = document.getElementById("userIcon");
+    if (!iconContainer) return;
+
     const userIcon = document.createElement("img");
     userIcon.src = userIconPath;
     userIcon.alt = "User icon";
     userIcon.style.width = '100%'
     userIcon.style.height = '100%'
-    document.getElementById("userIcon").appendChild(userIcon);
+
+    iconContainer.appendChild(userIcon);
 }
 
-function dropdownCreate(ID){
+function dropdownCreate(targetId){
+    const parentContainer = document.getElementById(targetId);
+    if (!parentContainer) return;
+
     const dropdown = document.createElement("img");
     dropdown.src = menuDownPath;
     dropdown.alt = "Dropdown menu";
     dropdown.className = "dropdown-arrow"
-    document.getElementById(ID).appendChild(dropdown);
+
+    parentContainer.appendChild(dropdown);
 }
 
+function chatItemCreate(targetId){
+    const chatContainer = document.getElementById(targetId);
+    if (!chatContainer) return;
 
-
-function chatItemCreate(ID){ // ID == Chatbox ID
     const chatItem = document.createElement("p");
     chatItem.src = menuDownPath;
     chatItem.alt = "Text";
-    document.getElementById(ID).appendChild(chatItem);
+
+    chatContainer.appendChild(chatItem);
 }
 
 
-
-
-
+// ==========================================
+// Data Fetch & Sync
+// ==========================================
 
 async function playlistFetchFlask() {
     try {
         const response = await fetch(`${BACKEND_ADDRESS}/api/playlist`);
+        if (!response.ok) throw new Error(`HTTP network error: status ${response.status}`);
+
         const data = await response.json();
-
-        console.log("Playlist Flask");
-        console.log(data);
-
         return data.playlist_data
-
     } catch (error) {
         console.error('Error fetching data:', error);
         return [
@@ -84,89 +93,72 @@ async function playlistFetchFlask() {
     }
 }
 
-
-// FLASK FETCH FUNCTIONS END
-
-
-
-
-
 async function loadPlaylists() {
-
     const playlistContainer = document.getElementById("playlist-grid");
+    if (!playlistContainer) return;
 
     playlistContainer.innerHTML = "";
-    
     const playlists = await playlistFetchFlask();
     
-    let idloop = 0;
-    
-    playlists.forEach(
-        playlist => 
+    playlists.forEach((playlist, index) =>
     {
-        let temphtml = "";
+        const boxId = 'box_${index + 1}'
         const box = document.createElement("div");
+        cardBox.className = "playlist-item";
+        cardBox.id = boxId
 
-        idloop += 1;
-        box.className = "playlist-item";
-        box.id = 'box_' + idloop;
-
+        let contentStructure = "";
         if (playlist.title) {
-            temphtml += `<h3>${playlist.title}</h3>`;
+            contentStructure += `<h3>${playlist.title}</h3>`;
         }
-
         if (playlist.duration) {
-            temphtml += `<p>Duration: ${playlist.duration}</p>`;
+            contentStructure += `<p>Duration: ${playlist.duration}</p>`;
         }
 
-        //temphtml += `<img src="default.jpg" alt="Playlist cover">`;
-
-        box.innerHTML = temphtml;
-
-        playlistContainer.appendChild(box);
-
-        dropdownCreate('box_' + idloop);
+        cardBox.innerHTML = contentStructure;
+        playlistContainer.appendChild(cardBox);
+        dropdownCreate(boxId);
     });
 }
 
-async function loadChat(text, id){
+
+// ==========================================
+// Dialogue & Interface
+// ==========================================
+
+async function loadChat(text, alignmentId){
     /* This is for loading previous chats, it takes an input from flask */
-    
-    let chathtml = "";
+    const chatContainer = document.getElementById("chatboxWindow");
+    if (!chatContainer) return;
+
     const chatItem = document.createElement("p");
+    chatItem.className = "chat-item";
+    chatItem.textContent = text;
 
-    const chatContainer = document.getElementById("chatbox-window");
-
-
-
+    // Format element alignments based on id
     try {
-        chatItem.className = "chat-item";
-        chathtml += `<p>${text}</p>`
-
-        if (id == '0') { // left
+        if (String(alignmentId) === '0') { // left
             chatItem.style.alignSelf = 'start'
             chatItem.style.marginRight = '5%'
         }
-        if (id == '1') { // right
+        if (String(alignmentId) === '1') { // right
             chatItem.style.alignSelf = 'end'
             chatItem.style.marginLeft = '5%'
         }
-        chatItem.innerHTML = chathtml;
-
         chatContainer.appendChild(chatItem)
     }
     catch (error) {
         console.error('Error fetching data:', error);}
-}
 
+    chatContainer.appendChild(chatItem);
+    chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll window
+}
 
 async function getChatBoxText() {
     let box_text = document.getElementById("chatboxinput").value
     console.log(box_text)
     return box_text
 }
-
-
 
 async function flaskChatSendResponse() {
     const tosend = await getChatBoxText();
@@ -182,9 +174,7 @@ async function flaskChatSendResponse() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    user_txt: tosend
-                })
+                body: JSON.stringify({ user_txt: tosend })
             });
 
             const data = await response.json();
@@ -201,37 +191,9 @@ async function flaskChatSendResponse() {
     }
 }
 
-
-async function init() {
-    iconCreate();
-    sendButtonCreate();
-    textAreaHandler()
-    username.textContent = "George"
-}
-
-// refreshes the playlists, in a function for when additional functionality required
-async function playlistRefresh() {
-    loadPlaylists()
-}
-
-
-
-
-async function infoPopup() {
-    
-}
-
-function textAreaHandler() {
-
-    document.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                flaskChatSendResponse();
-                document.getElementById('chatboxinput').value = ""
-            }
-        });
-}
-
+// ==========================================
+// Listeners
+// ==========================================
 
 async function navButtonsListen() {
 
@@ -259,6 +221,34 @@ async function navButtonsCloseListen() {
         console.log("close button clicked")
     });
 }
+
+async function init() {
+    iconCreate();
+    sendButtonCreate();
+    textAreaHandler()
+    username.textContent = "George"
+}
+
+// refreshes the playlists, in a function for when additional functionality required
+async function playlistRefresh() {
+    loadPlaylists()
+}
+
+async function infoPopup() {
+    
+}
+
+function textAreaHandler() {
+
+    document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                flaskChatSendResponse();
+                document.getElementById('chatboxinput').value = ""
+            }
+        });
+}
+
 
 init();
 playlistRefresh()
