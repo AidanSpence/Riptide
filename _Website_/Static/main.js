@@ -8,7 +8,7 @@ const menuDownPath = "assets/arrowDown.svg";
 
 const sendButtonPath = "assets/send.svg";
 
-const BACKEND_ADDRESS = "http://localhost:5000/" // PRODUCTION ADDRESS, MAYBE I GET FROM ENV VAR LATER?
+const BACKEND_ADDRESS = "0.0.0.0:5000/" // PRODUCTION ADDRESS, MAYBE I GET FROM ENV VAR LATER?
 
 const username = document.getElementById("userName")
 
