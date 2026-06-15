@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 from _Recommendation_System_.Frontend import chatbot
 
 # Variables
-app = Flask(__name__)
+application = Flask(__name__)
 bot = chatbot.Chatbot()
 
 # Routes
@@ -85,7 +85,7 @@ def get_response():
 
 # Program run
 if __name__ == "__main__":
-    app.run(
+    application.run(
         host="0.0.0.0",
         port=5000,
         debug=False
