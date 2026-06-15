@@ -1,0 +1,1 @@
+This project called ‘Riptide’ is an AI music recommendation system that utilizes artificial intelligence with a clustering backend to create a hybrid system that uses minimal user data and maximizes musical diversity.
