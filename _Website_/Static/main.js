@@ -1,6 +1,7 @@
 // Global Confguration
-const BACKEND_ADDRESS = "0.0.0.0:5000/";
-
+const BACKEND_ADDRESS = window.location.origin;
+// All fetch requests MUST have /api appended to the address or else it will not reach the flask 
+// -backend due to behavior restrictions from cloudfront.
 const playlist = [];
 
 const paths = {
