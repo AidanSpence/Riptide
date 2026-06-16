@@ -374,5 +374,16 @@ body {
 }
 /* chat box content END*/
 
+/* Table */
 
+.recommendation-table {
+    color: wheat;
+    width: 100%;
+}
+
+.recommendation-table th,
+.recommendation-table td {
+    padding: 10px;
+    text-align: left;
+}
 

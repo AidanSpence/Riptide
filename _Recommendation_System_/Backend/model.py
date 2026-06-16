@@ -1,19 +1,20 @@
+from pathlib import Path
+import random
+import joblib
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import numpy as np
-import joblib
-import random
 
-
-SAVE_DIR  = "_Recommendation_System_\\models"
-
+# Configuration
+PROJECT_ROOT = Path(__file__).resolve().parent
+SAVE_DIR = PROJECT_ROOT / "_Recommendation_System_" / "models"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Model Class
+
 class TripletNet(nn.Module):
-    """Torch Model"""
-    def __init__(self, input_dim):
+    """Deep Neural Network for learning low-dimensional vector embeddings."""
+    def __init__(self, input_dim: int):
         super().__init__()
         self.stack = nn.Sequential(
             nn.Linear(input_dim, 1024),
@@ -22,42 +23,45 @@ class TripletNet(nn.Module):
             nn.ReLU(),
             nn.Linear(512, 128))
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
         return self.stack(x)
 
-# Triplet Creator
-def create_triplets(X, labels, n_samples=10000):
-    """Function for converting dataset and cluster values
-    into anchor, positive and negative point"""
+
+def create_triplets(labels: np.ndarray, n_samples: int = 10000):
+    """Generates anchor, positive and negative point from dataset and cluster values"""
 
     label_to_indices = {}
     for i, label in enumerate(labels):
         label_to_indices.setdefault(label, []).append(i)
 
-    indices = list(range(len(X)))
-    triplets = []
+    all_labels = list(label_to_indices.keys())
+    all_indices = list(range(len(labels)))
 
-    n_samples = n_samples or len(X)  # Ensure more than the dataset size isn't sampled
+    anchors, positives, negatives = [], [], []
 
     for _ in range(n_samples):
-        anchor = random.choice(indices)
+        anchor = random.choice(all_indices)
         anchor_label = labels[anchor]
 
         positive = random.choice(label_to_indices[anchor_label])
 
-        negative_index = random.choice([i for i in label_to_indices.keys() if i != anchor_label])
-        negative = random.choice(label_to_indices[negative_index])
+        negative_label = random.choice([label for label in label_to_indices.keys() if label != anchor_label])
+        negative = random.choice(label_to_indices[negative_label])
+        
+        anchors.append(anchor)
+        positives.append(positive)
+        negatives.append(negative)
 
-        triplets.append((anchor, positive, negative))
-
-    return triplets
+    return anchors, positives, negatives
 
 
 def train_model():
-    """Function for training the model and saving the best model and embeddings"""
+    """Trains the embedding model using optimized batch triplet ranking loss and saves the best model and embeddings"""
+
     # Load Model and create triplets
-    X = joblib.load(f"{SAVE_DIR}/X_final.jb")
-    df = joblib.load(f"{SAVE_DIR}/df.jb")
+    X = joblib.load(SAVE_DIR / "X_final.jb")
+    df = joblib.load(SAVE_DIR / "df.jb")
+    labels = df['cluster'].values
 
     X_tensor = torch.tensor(X, dtype=torch.float32).to(DEVICE)
 
@@ -65,9 +69,8 @@ def train_model():
     optimizer = optim.SGD(model.parameters(), lr=1e-3)
     criterion = nn.TripletMarginLoss(margin=1.0)
 
-
     best_loss = float('inf')
-    patience = 0
+    patience_counter = 0
 
     labels = df['cluster'].values
 
@@ -76,38 +79,39 @@ def train_model():
         triplets = create_triplets(X, labels)
 
         model.train()
-        total_loss = 0
 
-        for anchor, positive, negative in triplets:
-            anchor_out = model(X_tensor[anchor].unsqueeze(0))
-            positive_out = model(X_tensor[positive].unsqueeze(0))
-            negative_out = model(X_tensor[negative].unsqueeze(0))
+        # Extract indices 
+        anc_idx, pos_idx, neg_idx = create_triplets(labels, n_samples=10000)
 
-            loss = criterion(anchor_out, positive_out, negative_out)
+        # Send directly to GPU/CPU at same time
+        anchor_out = model(X_tensor[anc_idx])
+        positive_out = model(X_tensor[pos_idx])
+        negative_out = model(X_tensor[neg_idx])
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+        loss = criterion(anchor_out, positive_out, negative_out)
 
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-            total_loss += loss.item()
+        total_loss += loss.item()
         avg_loss = total_loss / len(triplets)
-
         print(f"Epoch {epoch+1}, Loss: {avg_loss:.4f}")
 
+        # Early Stopping Check
         if avg_loss < best_loss:
             best_loss = avg_loss
-            patience = 0
+            patience_counter = 0
 
+            # Export updated embeddings
             with torch.no_grad():
                 embeddings = model(X_tensor).detach().cpu().numpy()
 
-            torch.save(model.state_dict(), f"{SAVE_DIR}/model.pt")
-            np.savez_compressed(f"{SAVE_DIR}/embeddings.npz", embeddings=embeddings)
-
+            torch.save(model.state_dict(), SAVE_DIR / "model.pt")
+            np.savez_compressed(SAVE_DIR / "embeddings.npz", embeddings=embeddings)
         else:
-            patience += 1
-            if patience >= 10:
+            patience_counter += 1
+            if patience_counter >= 10:
                 print("Early stop")
                 break
 
