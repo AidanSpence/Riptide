@@ -1,122 +1,96 @@
+/* ==========================================
+   1. ROOT VARIABLES & GLOBAL STYLES
+   ========================================== */
 
-
-:root{
-  --main-color:#101111; /*main interface color*/
-  --secondary-color:#202121; /*color to be used for secondary elements such as for gradients*/
-  --highlight-color:#24117B; /*Main highlight color, blue currently*/
-  --secondary-highlight:#112b79
+:root {
+  /* Main UI Color Palette */
+  --main-color: #101111;              /* Main interface dark background */
+  --secondary-color: #202121;         /* Used for cards, secondary elements, and gradients */
+  --highlight-color: #24117B;         /* Primary accent color (Vibrant Blue) */
+  --secondary-highlight: #112b79;     /* Secondary accent color (Deep Blue) */
 }
 
-
-
-
-body{
-  background: 
-    linear-gradient(to bottom, var(--secondary-highlight), var(--main-color) 22%, black),
-    /* this generates noise, represented as an image, which you overlay on a gradient for good looks */
-    url(data:image/png;base64,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);
-    background-size: cover, 128px, 128px;
-    background-repeat: no-repeat, repeat;
-    mix-blend-mode:auto;
-    z-index: -1;   
-}
-
-html{
+html {
+  min-height: 100dvh;
   scroll-behavior: smooth;
   scrollbar-color: #333 #111;
-  min-height: 100dvh;
 }
-
 
 body {
-  min-height:100vmin;
   height: 100%;
+  min-height: 100vmin;
   margin: 0;
+  z-index: -1;   
+  mix-blend-mode: auto;
+  /* Overlaying a base64 grain/noise image over a dark blue/black linear gradient */
+  background: 
+    linear-gradient(to bottom, var(--secondary-highlight), var(--main-color) 22%, black),
+    url(data:image/png;base64,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);
+  background-size: cover, 128px, 128px;
+  background-repeat: no-repeat, repeat;
 }
 
+/* ==========================================
+   2. LAYOUT
+   ========================================== */
 
-
-.header-bar{
-  display: flex;
-  position: relative;
-  width:100%;
-  height:10vmin;
-  background-image: linear-gradient(to right, var(--highlight-color), var(--secondary-highlight) );
-  margin-top: 0;
-  margin-bottom: 1%;
-  border-bottom: 1px groove rgba(255, 255, 255, 0.1);
-}
-
-.header-text{
-  color: white; 
-  display: flex; 
-  align-self: center; 
-  padding: 1%;
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(1.5vw, 1.5vw, 1.5vw);
-  margin: 0;
-}
-
-.info-popup-text {
-  align-self: right;
-  justify-self: right;
-  color: white;
-  word-wrap: normal;
-  font-size: x-large;
-  overflow: auto;
-
-}
-
-.info-popup-close{
-  color: white;
-  font-size: xx-large;
-  align-self: center;
-  justify-self: center;
-  cursor: pointer;
-}
-
-.info-popup-box{
-  display: flex;
-  border-radius: 3vmin;
-  max-height: 80vmin;
-  min-height: 80vmin;
-  background-image: linear-gradient(var(--secondary-color), var(--main-color));
-  border: 10px solid green;
-}
-
-
-.grid-container{
+.grid-container {
   display: grid;
-  grid-template-columns: 30fr 43fr 60fr; /* 4:5:5 ratio */
-  max-height: 80vmin;
-  min-height: 80vmin;
+  grid-template-columns: 30fr 43fr 60fr; /* Layout ratio roughly matches 4:5:5 */
   width: 97%;
+  min-height: 80vmin;
+  max-height: 80vmin;
   gap: 1%;
   padding: 1%;
   padding-top: 0%;
 }
 
+/* ==========================================
+   3. HEADER COMPONENTS
+   ========================================== */
 
-
-.nav-box{ /* 528px / ratio of 4: */
-  width:100%;
-  min-width: auto;
-  height:100%;
-  background-image: linear-gradient(var(--secondary-color), var(--main-color));
-  border: 1px, groove, rgba(255, 255, 255, 0.1);
-  border-radius: 3vmin;
-  box-sizing: border-box;
-  overflow: hidden;
+.header-bar {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 10vmin;
+  margin-top: 0;
+  margin-bottom: 1%;
+  background-image: linear-gradient(to right, var(--highlight-color), var(--secondary-highlight));
+  border-bottom: 1px groove rgba(255, 255, 255, 0.1);
 }
 
-/* navigation box content */
+.header-text {
+  display: flex;
+  align-self: center;
+  margin: 0;
+  padding: 1%;
+  color: white; 
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.5vw, 1.5vw, 1.5vw);
+}
 
-.nav-grid{
+/* ==========================================
+   4. INFO BOX
+   ========================================== */
+
+.nav-box {
+  width: 100%;
+  min-width: auto;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-image: linear-gradient(var(--secondary-color), var(--main-color));
+  border: 1px groove rgba(255, 255, 255, 0.1);
+  border-radius: 3vmin;
+}
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: 1fr; 
+  grid-template-rows: 0fr;
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: 1fr; /* 4:5:5 ratio */
-  grid-template-rows: 0fr;
   padding: 3%;
   row-gap: 0%;
   justify-self: center;
@@ -127,263 +101,252 @@ body {
   width: 30vmin;
   height: 30vmin;
   margin: 0px;
-  border-radius: 3vmin;
   justify-self: center;
+  border-radius: 3vmin;
   background-color: transparent;
 }
-.user-name{
+
+.user-name {
   display: flex;
+  height: 2.3ch;
   justify-self: center;
   align-self: normal;
   color: white;
-  font-size: clamp(1.5vw, 1.5vw, 1.5vw);
-  height: 2.3ch;
   font-family: 'Inter', sans-serif;
-  text-decoration:underline;
+  font-size: clamp(1.5vw, 1.5vw, 1.5vw);
+  text-decoration: underline;
   text-underline-offset: 0.15vw;
-  
 }
-.nav-button{
-  justify-self: center;
-  margin-top: 3%;
+
+.nav-button {
   width: 99%;
   height: 80%;
-  background-color: var(--secondary-color); /* Grey */
+  margin-top: 3%;
+  justify-self: center;
+  box-sizing: border-box;
+  background-color: var(--secondary-color);
   border-radius: 3vmin;
   text-align: center;
   font-size: auto;
-  box-sizing: border-box;
   cursor: pointer;
 }
-.nav-button :hover{
+
+.nav-button:hover {
   background-color: var(--main-color);
   border-radius: 3vmin;
 }
-.button-text{
-  place-items: center;
+
+.button-text {
   display: grid;
+  place-items: center;
   width: 100%;
   height: 100%;
   color: white;
-  font-size: clamp(1.5vw, 1.5vw, 1.5vw);
   font-family: 'Inter', sans-serif;
+  font-size: clamp(1.5vw, 1.5vw, 1.5vw);
   font-optical-sizing: auto;
 }
 
+/* ==========================================
+   5. PLAYLIST BOX
+   ========================================== */
 
-/* navigation box content END */
-
-
-
-
-
-
-
-
-
-
-
-
-/* playlist box content */
-.playlist-wrapper{
+.playlist-wrapper {
   width: 100%;
   height: 100%;
-  border-radius: 3vmin;
-  overflow: hidden;
   padding: 0%;
-  
+  overflow: hidden;
+  border-radius: 3vmin;
 }
 
-.playlist-box{ /* 660px / ratio of 5: */
-  overflow-y: scroll;
-  width:auto;
-  height:100%;
-  max-height: 80vmin;
-  background-image: linear-gradient(var(--secondary-color), #101111);
+.playlist-box { 
   display: grid;
-  border: 1px, groove, rgba(255, 255, 255, 0.1);
-  padding-left:1%;
-  padding-right:2%;
-  padding-bottom:1%;
-  padding-top: 1%;
+  width: auto;
+  height: 100%;
+  max-height: 80vmin;
+  padding: 1% 2% 1% 1%;
+  overflow-y: scroll;
+  background-image: linear-gradient(var(--secondary-color), #101111);
+  border: 1px groove rgba(255, 255, 255, 0.1);
   scrollbar-color: var(--main-color) transparent;
   scrollbar-width: thin;
 }
 
-
-.playlist-item{
+.playlist-item {
   display: grid;
-  margin-top: 3%;
   width: 99%;
   height: fit-content; 
+  margin-top: 3%;
+  padding: 1%;
   background-color: var(--secondary-color); 
   border-radius: 3vmin;
-  padding: 1%;
 }
 
-.playlist-item h3{
-  overflow-wrap: break-word;
+.playlist-item h3 {
   max-width: 16ch;
+  overflow-wrap: break-word;
 }
-/*   justify-self: center;
-  align-self: center;*/
 
-.dropdown-arrow{
+.dropdown-arrow {
   display: grid;
+  grid-row: 1;
   width: 3vmin;
   height: 3vmin;
+  justify-self: right;
+  align-self: center;
   background-color: #101111;
   border-radius: 3vmin;
-  justify-self: right;
-  grid-row: 1;
-  align-self: center;
 }
 
-
-
-
-#playlist-grid p { /* Font for playlist small text */
-  font-size: clamp(1vw, 1vw, 24px);
-  color: lightgrey;
-  margin: 5%;
-  grid-row:1;
+#playlist-grid p {
+  grid-row: 1;
   justify-self: auto;
   align-self: end;
+  margin: 5%;
+  color: lightgrey;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1vw, 1vw, 24px);
   white-space: nowrap;
   text-overflow: auto;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
 }
-#playlist-grid h3 { /* Fonts for playlist title text */
-  font-size: clamp(1.5vw, 1.5vw, 48px);
-  color: white;
+
+#playlist-grid h3 {
+  grid-row: 1;
   margin: 1%;
-  grid-row:1;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.5vw, 1.5vw, 48px);
+  font-weight: normal;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
-  font-weight: normal;
 }
 
-/* playlist box content END*/
+/* ==========================================
+   6. CHATBOX
+   ========================================== */
 
-
-
-
-
-
-/* chat box content */
-
-.chatbox{ /* 660px/ ratio of 5: */
+.chatbox {
   display: flex;
   flex-direction: column;
-  overflow-y:hidden;
-  border: 1px, groove, rgba(255, 255, 255, 0.1);
-  width:100%;
-  max-height:5fr;
-  background-image: linear-gradient(var(--secondary-color), #101111);
-  border-radius: 3vmin;
   align-items: center;
+  width: 100%;
+  max-height: 5fr;
+  overflow-y: hidden;
+  background-image: linear-gradient(var(--secondary-color), #101111);
+  border: 1px groove rgba(255, 255, 255, 0.1);
+  border-radius: 3vmin;
 }
 
-
-.chatbox-window{
+.chatbox-window {
   display: flex;
   flex-direction: column;
-  row-gap: 0;
-  margin-top: 1%;
-  border-radius: 3vmin;
-  height: 88%;
   width: 98%;
-  background-image: linear-gradient(var(--secondary-color), var(--main-color)); /* This will be transperent, but to show text borders using this for now */
-  overflow-y:scroll;
-  overflow-x:hidden;
+  height: 88%;
   max-height: 80vmin;
+  margin-top: 1%;
+  row-gap: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
   white-space: pre-line;
+  background-image: linear-gradient(var(--secondary-color), var(--main-color));
 }
 
-.chat-item{
+.chat-item {
   width: fit-content;
   height: fit-content;
-  color: white;
-  background-image: linear-gradient(var(--secondary-color) 10%, var(--main-color) );
-  border: 1px, groove, grey;
-  border-radius: 3vmin;
   margin: 1%;
   padding: 1%;
+  color: white;
   font-family: 'Inter', sans-serif;
+  background-image: linear-gradient(var(--secondary-color) 10%, var(--main-color));
+  border: 1px groove grey;
+  border-radius: 3vmin;
 }
 
-
-.chatbox-input-box{
+.chatbox-input-box {
   display: flex;
+  width: 95%;
+  height: 10%;
+  margin-top: 1%;
+  margin-bottom: 1%;
   padding-left: 1%;
   padding-right: 1%;
-  width: 95%;
-  border-radius: 3vmin;
-  height: 10%;
-  margin-bottom: 1%;
-  margin-top: 1%;
   background-color: var(--secondary-color);
   border-radius: 3vmin;
 }
 
-.chatbox-input{
+.chatbox-input {
   display: flex;
-  align-self:center;
+  align-self: center;
   justify-self: center;
   width: 95%;
   height: 80%;
   padding: 1%;
   padding-left: 2%;
-  /* border-radius: 3vmin; */
+  color: white;
+  font-size: clamp(.8vw, 1vw, 24px);
   background: transparent;
   border: none;
   outline: none;
-  color: white;
   resize: none;
   scrollbar-color: var(--main-color) transparent;
-  font-size: clamp(.8vw, 1vw, 24px);
 }
-.chatbot-input-button{
+
+.chatbot-input-button {
   display: flex;
   align-content: center;
   justify-content: center;
-  align-self:center;
+  align-self: center;
   justify-self: center;
-  height: 5vmin;
   width: 5vmin;
+  height: 5vmin;
 }
 
-.send-button{
+.send-button {
   width: 5vmin;
   height: 5vmin;
-  background-color: var(--secondary-color);
+  padding: 0;
   color: transparent;
   font-size: 0px;
-  padding: none;
+  background-color: var(--secondary-color);
   border: none;
-  cursor: pointer;
   border-radius: 1vmin;
+  cursor: pointer;
 } 
 
 .send-button:hover {
   background-color: var(--main-color);
   border-radius: 3vmin;
 }
-/* chat box content END*/
 
-/* Table */
+/* ==========================================
+   7. INFO POPUPS & TABLES
+   ========================================== */
 
-.recommendation-table {
-    color: wheat;
-    width: 100%;
+.info-popup-box {
+  display: flex;
+  min-height: 80vmin;
+  max-height: 80vmin;
+  background-image: linear-gradient(var(--secondary-color), var(--main-color));
+  border: 10px solid green;
+  border-radius: 3vmin;
 }
 
-.recommendation-table th,
-.recommendation-table td {
-    padding: 10px;
-    text-align: left;
+.info-popup-text {
+  justify-self: right;
+  align-self: right;
+  color: white;
+  font-size: x-large;
+  word-wrap: normal;
+  overflow: auto;
 }
 
+.info-popup-close {
+  justify-self: center;
+  align-self: center;
+  color: white;
+  font-size: xx-large;
+  cursor: pointer;
+}
