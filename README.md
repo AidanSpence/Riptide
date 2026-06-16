@@ -28,6 +28,12 @@ This project utilizes the **[Million Song Dataset](http://millionsongdataset.com
 
 Follow these instructions to get a copy of the MVP up and running on your local machine.
 
+To run Ai system independently
+python -m _Recommendation_System_.Frontend.chatbot
+
+python -m http.server 5500 
+"""Starts the html server on port 5500"""
+
 ### Prerequisites
 
 * Python 3.10+
