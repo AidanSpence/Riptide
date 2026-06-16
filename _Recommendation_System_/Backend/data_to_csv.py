@@ -1,13 +1,27 @@
 import hdf5_getters as g
 from pathlib import Path
-import csv 
+import csv
 import numpy as np
 
 
 
+<<<<<<< Updated upstream
 base = Path(r"D:\Users\270385733\OneDrive - UP Education\Desktop\millionsongsubset") # Change this to the location of the Million Song Subset on your computer
 files = list(base.rglob("*.h5"))
 
+=======
+    # Prevent numpy array conversions from adding newline characters
+    np.set_printoptions(linewidth=np.inf)
+
+    # Define features for the output structure
+    headers = [
+        "title", "artist_name", "year", "duration", "tempo", 
+        "time_signature", "key", "loudness", "mode", 
+        "end_of_fade_in", "start_of_fade_out", "artist_terms"
+    ]
+
+    decode_bytes = lambda val: val.decode('UTF-8') if isinstance(val, bytes) else val
+>>>>>>> Stashed changes
 
 def make_csv(files):
     i = 0
