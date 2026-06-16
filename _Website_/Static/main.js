@@ -25,7 +25,7 @@ function sendButtonCreate() {
   }
 
   const sendButton = document.createElement("img");
-  sendButton.src = paths.sendButtonPath;
+  sendButton.src = paths.sendButton;
   sendButton.alt = "Send Button";
   sendButton.classList.add("send-button");
   sendButton.id = "send-button";
@@ -46,7 +46,7 @@ function iconCreate() {
   }
 
   const userIcon = document.createElement("img");
-  userIcon.src = paths.userIconPath;
+  userIcon.src = paths.userIcon;
   userIcon.alt = "User icon";
   userIcon.style.width = "100%";
   userIcon.style.height = "100%";
@@ -62,7 +62,7 @@ function dropdownCreate(targetId) {
   }
 
   const dropdown = document.createElement("img");
-  dropdown.src = paths.menuDownPath;
+  dropdown.src = paths.menuDown;
   dropdown.alt = "Dropdown menu";
   dropdown.className = "dropdown-arrow";
 
@@ -117,7 +117,7 @@ async function loadPlaylists() {
 
   playlists.forEach((playlist, index) => {
     const boxId = `box_${index + 1}`;
-    const cardbox = document.createElement("div");
+    const cardBox = document.createElement("div");
     cardBox.className = "playlist-item";
     cardBox.id = boxId;
 
