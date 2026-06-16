@@ -1,19 +1,20 @@
-import hdf5_getters as g
 from pathlib import Path
 import csv
 import numpy as np
+import hdf5_getters as g
+
+# Configuration
+BASE_DIR = Path(r"D:\Users\270385733\OneDrive - UP Education\Desktop\millionsongsubset")
+FILES_POOL = list(BASE_DIR.rglob("*.h5"))
 
 
+def make_csv(files: list[Path]):
+    """Extracts song features from HDF5 files and exports them into a CSV file."""
 
-<<<<<<< Updated upstream
-base = Path(r"D:\Users\270385733\OneDrive - UP Education\Desktop\millionsongsubset") # Change this to the location of the Million Song Subset on your computer
-files = list(base.rglob("*.h5"))
-
-=======
-    # Prevent numpy array conversions from adding newline characters
+    # Prevent numpy array conversions from injecting arbitrary newline characters
     np.set_printoptions(linewidth=np.inf)
 
-    # Define features for the output structure
+    # Define features mapped explicitly to the output structure
     headers = [
         "title", "artist_name", "year", "duration", "tempo", 
         "time_signature", "key", "loudness", "mode", 
@@ -21,81 +22,41 @@ files = list(base.rglob("*.h5"))
     ]
 
     decode_bytes = lambda val: val.decode('UTF-8') if isinstance(val, bytes) else val
->>>>>>> Stashed changes
 
-def make_csv(files):
-    i = 0
     with open("output.csv", "w", encoding="utf-8", newline="") as f:
-
-        # To stop newline characters
-        np.set_printoptions(linewidth=np.inf)
-
-
         writer = csv.writer(f)
-        writer.writerow(["title",
-                        "artist_name",
-                        #"release",
-                        "year",
-                        "duration",
-                        "tempo",
-                        "time_signature",
-                        #"energy",
-                        #"danceability",
-                        "key",
-                        "loudness",
-                        "mode",
-                        "end_of_fade_in",
-                        "start_of_fade_out",
-                        "artist_terms",
-                        #"similar_artists",
-                        #"location"
-                        ])
+        writer.writerow(headers)
 
-        for f in files:
-            i += 1
-            h5 = g.open_h5_file_read(f)
-            title = g.get_title(h5)
-            artist_name = g.get_artist_name(h5)
-            release = g.get_release(h5)
-            year = g.get_year(h5)
-            duration = g.get_duration(h5)
-            tempo = g.get_tempo(h5)
-            time_signature = g.get_time_signature(h5)
-            energy = g.get_energy(h5)
-            danceability = g.get_danceability(h5)
-            key = g.get_key(h5)
-            loudness = g.get_loudness(h5)
-            mode = g.get_mode(h5)
-            end_of_fade_in = g.get_end_of_fade_in(h5)
-            start_of_fade_out = g.get_start_of_fade_out(h5)
-            artist_terms = g.get_artist_terms(h5)
-            similar_artists = g.get_similar_artists(h5)
-            location = g.get_artist_location(h5)
+        for idx, file_path in enumerate(files, start=1):
+            h5 = g.open_h5_file_read(file_path)
 
-            clean_artist_terms = artist_terms.astype(str)
-            
-            writer.writerow([
-                    title.decode('UTF-8'), 
-                    artist_name.decode('UTF-8'),
-                    #release.decode('UTF-8'),
-                    year, 
-                    duration, 
-                    tempo, 
-                    time_signature, 
-                    #energy, 
-                    #danceability, 
-                    key, 
-                    loudness,
-                    mode, 
-                    end_of_fade_in, 
-                    start_of_fade_out, 
-                    clean_artist_terms, 
-                    #similar_artists, 
-                    #location.decode('UTF-8')
-                    ])
-            
-            print(i)
-            h5.close()
+            try:
+                # Extract string values
+                title = decode_bytes(g.get_title(h5))
+                artist_name = decode_bytes(g.get_artist_name(h5))
+                artist_terms = g.get_artist_terms(h5).astype(str)
+
+                writer.writerow([
+                    title,
+                    artist_name,
+                    g.get_year(h5),
+                    g.get_duration(h5),
+                    g.get_tempo(h5),
+                    g.get_time_signature(h5),
+                    g.get_key(h5),
+                    g.get_loudness(h5),
+                    g.get_mode(h5),
+                    g.get_end_of_fade_in(h5),
+                    g.get_start_of_fade_out(h5),
+                    artist_terms
+                ])
+
+            finally:
+                h5.close()
+
+            if idx % 500 == 0 or idx == len(files):
+                print(f"{idx}/{len(files)} files done")
 
 if __name__ == "__main__":
-    make_csv(files)
+    make_csv(FILES_POOL)
+    print("Saved output to 'output.csv'.")
