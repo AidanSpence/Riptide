@@ -16,7 +16,7 @@ Riptide is an innovative AI music recommendation system that utilizes machine le
 ## Live Demo
 
 The latest build of Riptide is deployed and available on the cloud:
-**[Riptide Live Deployment](CLOUD_UPLOAD_LINK_HERE)**
+**[Riptide Live Deployment](https://d11r265tlaxh0o.cloudfront.net/)**
 
 
 ## Dataset Reference
@@ -43,8 +43,8 @@ Follow these instructions to get a copy of the MVP up and running on your local 
 
 ### Running Code
 
-To run Ai system independently
+To run Ai system independently:
 python -m _Recommendation_System_.Frontend.chatbot
 
-To starts an html server on port 5500 for loading website
+To starts an html server on port 5500 for loading website:
 python -m http.server 5500
