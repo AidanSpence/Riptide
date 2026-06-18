@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, request
+from _Recommendation_System_.Frontend import chatbot
 import os
 import logging
 import sys
-from _Recommendation_System_.Frontend import chatbot
 
-# Variables
+# App Configuration
 application = Flask(__name__)
 app = application
 bot = chatbot.Chatbot()
@@ -24,22 +24,19 @@ def verify_origin():
     if token != SECRET:
         return {"error": "Forbidden"}, 403
 
-
+# ==========================================
 # Routes
-"""Test route to see if the program is responding correctly"""
+# ==========================================
+
 @app.route("/")
 def hello_world():
+    """Test route to see if the program is responding correctly"""
     return "<p>Hello, World!</p>"
 
 
-
-
-
-
-"""Passes playlist info as a list of json, with the values:
-title and duration """
 @app.route('/api/playlist', methods=['GET'])
 def send_playlist():
+    """Passes playlist info as a list of json, with the values: title and duration"""
     items = {
         "playlist_data": [
             {
@@ -55,50 +52,39 @@ def send_playlist():
     return jsonify(items), 200
 
 
-
-
-"""
-This route will recieve data from the website as user_input, 
-which will then be passed into the chatbot
-"""
 @app.route('/api/chat', methods=['POST'])
 def get_response():
-    print("anything at all?")
-    print("Raw JSON:", request.get_json())
-
+    """
+    Receives incoming message from the website,
+    processes them via the chatbot, and returns the response.
+    """
+    print("JSON Message: ", request.get_json())
     recieved = request.get_json()
-
+    
     if not recieved:
-        return jsonify({"error": "No JSON received"}), 400
+        return jsonify({"Error": "No JSON received"}), 400
 
     user_input = recieved.get('user_txt')
-    print("user_input:", user_input)
 
+    # Verify Message
     if not user_input:
-        print("ahhhh no user_txt")
-        return jsonify({"error": "user_txt missing"}), 400
-
-    print("found it", user_input)
+        return jsonify({"Error": "user_txt missing"}), 400
     
+    # Process input through chatbot
     bot_output = bot.chat(user_input)
-    print(bot_output)
     
     response_data = {
         'chatbot_txt': f"{bot_output}", 
         'msg_id': "0"
     }
 
-    
     return jsonify(response_data), 200
-    
+
 
 #ROUTES FOR EXTERNAL API (E.G SPOTIFY AND SENSTIVE DATA)
 
-
 # @app.route('spotifyWebsiteVar{id}', methods=['GET'])
 # def get_playlists():
-
-
 
 
 # Program run
