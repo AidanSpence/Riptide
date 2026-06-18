@@ -1,7 +1,6 @@
 // Global Confguration
-const BACKEND_ADDRESS = window.location.origin;
-// All fetch requests MUST have /api appended to the address or else it will not reach the flask 
-// -backend due to behavior restrictions from cloudfront.
+const BACKEND_ADDRESS = "http://127.0.0.1:5000";
+
 const playlist = [];
 
 const paths = {
@@ -182,10 +181,10 @@ async function getChatBoxText() {
 async function flaskChatSendResponse() {
   const tosend = await getChatBoxText();
   if (tosend != "") {
+
     loadChat(tosend, 1);
 
-    const chatInput = document.getElementById("chatboxinput");
-    if (chatInput) chatInput.value = "";
+    document.getElementById('chatboxinput').value = ""
 
     console.log(`Sent: `, tosend);
 
