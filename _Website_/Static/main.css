@@ -322,7 +322,7 @@ body {
 }
 
 /* ==========================================
-   7. INFO POPUPS
+   7. INFO POPUPS and Table
    ========================================== */
 
 .info-popup-box {
@@ -349,4 +349,14 @@ body {
   color: white;
   font-size: xx-large;
   cursor: pointer;
+}
+
+.recommendation-table {
+    width: 100%;
+}
+
+.recommendation-table th,
+.recommendation-table td {
+    padding: 10px;
+    text-align: left;
 }
