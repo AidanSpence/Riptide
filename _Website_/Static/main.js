@@ -1,5 +1,5 @@
 // Global Confguration
-const BACKEND_ADDRESS = "http://127.0.0.1:5000";
+const BACKEND_ADDRESS = window.location.origin;
 
 const playlist = [];
 
@@ -143,7 +143,7 @@ async function loadChat(text, alignmentId) {
   // This is for loading previous chats, it takes an input from flask
   const chatContainer = document.getElementById("chatboxWindow");
   if (!chatContainer) {
-    console.log("playlist-grid not found");
+    console.log("chatboxWindow not found");
     return;
   }
 
