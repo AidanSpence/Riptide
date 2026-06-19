@@ -86,6 +86,8 @@ def get_response():
 # @app.route('spotifyWebsiteVar{id}', methods=['GET'])
 # def get_playlists():
 
+# @app.route("/login-fail")
+# def failed():
 
 # Program run
 if __name__ == "__main__":
