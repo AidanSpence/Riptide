@@ -11,18 +11,18 @@ bot = chatbot.Chatbot()
 logger = logging.getLogger(__name__)
 
 
-SECRET = os.environ.get("ORIGIN_VERIFY_SECRET")
+# SECRET = os.environ.get("ORIGIN_VERIFY_SECRET")
 
-if not SECRET:
-    logger.warning("ORIGIN_VERIFY_SECRET not found in environment. Falling back to default secret for local development only.")
-    print("WARNING: ORIGIN_VERIFY_SECRET not found in environment.", file=sys.stderr)
-    SECRET = "localhost"
+# if not SECRET:
+#     logger.warning("ORIGIN_VERIFY_SECRET not found in environment. Falling back to default secret for local development only.")
+#     print("WARNING: ORIGIN_VERIFY_SECRET not found in environment.", file=sys.stderr)
+#     SECRET = "localhost"
 
-@app.before_request
-def verify_origin():
-    token = request.headers.get("X-Origin-Verify")
-    if token != SECRET:
-        return {"error": "Forbidden"}, 403
+# @app.before_request
+# def verify_origin():
+#     token = request.headers.get("X-Origin-Verify")
+#     if token != SECRET:
+#         return {"error": "Forbidden"}, 403
 
 # ==========================================
 # Routes
