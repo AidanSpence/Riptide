@@ -16,7 +16,7 @@ Riptide is an innovative AI music recommendation system that utilizes machine le
 ## Live Demo
 
 The latest build of Riptide is deployed and available on the cloud:
-**[Riptide Live Deployment](CLOUD_UPLOAD_LINK_HERE)**
+**[Riptide Live Deployment](https://d11r265tlaxh0o.cloudfront.net/)**
 
 
 ## Dataset Reference
@@ -28,17 +28,11 @@ This project utilizes the **[Million Song Dataset](http://millionsongdataset.com
 
 Follow these instructions to get a copy of the MVP up and running on your local machine.
 
-To run Ai system independently
-python -m _Recommendation_System_.Frontend.chatbot
-
-python -m http.server 5500 
-"""Starts the html server on port 5500"""
-
 ### Prerequisites
 
 * Python 3.10+
 * Pip (Python package manager)
-* [MillionSongSubset](http://labrosa.ee.columbia.edu/~dpwe/tmp/millionsongsubset.tar.gz) <-- for backend
+* [MillionSongSubset](http://labrosa.ee.columbia.edu/~dpwe/tmp/millionsongsubset.tar.gz) <-- for backend code
 
 ### Installation
 
@@ -46,3 +40,11 @@ python -m http.server 5500
    ```bash
    git clone [https://github.com/AidanSpence/Riptide.git](https://github.com/AidanSpence/Riptide.git)
    cd riptide
+
+### Running Code
+
+To run Ai system independently:
+python -m _Recommendation_System_.Frontend.chatbot
+
+To starts an html server on port 5500 for loading website:
+python -m http.server 5500
