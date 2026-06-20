@@ -1,9 +1,28 @@
 from flask import Flask, jsonify, request
 from _Recommendation_System_.Frontend import chatbot
+import os
+import logging
+import sys
 
 # App Configuration
-app = Flask(__name__)
+application = Flask(__name__)
+app = application
 bot = chatbot.Chatbot()
+logger = logging.getLogger(__name__)
+
+
+# SECRET = os.environ.get("ORIGIN_VERIFY_SECRET")
+
+# if not SECRET:
+#     logger.warning("ORIGIN_VERIFY_SECRET not found in environment. Falling back to default secret for local development only.")
+#     print("WARNING: ORIGIN_VERIFY_SECRET not found in environment.", file=sys.stderr)
+#     SECRET = "localhost"
+
+# @app.before_request
+# def verify_origin():
+#     token = request.headers.get("X-Origin-Verify")
+#     if token != SECRET:
+#         return {"error": "Forbidden"}, 403
 
 # ==========================================
 # Routes
@@ -39,15 +58,17 @@ def get_response():
     Receives incoming message from the website,
     processes them via the chatbot, and returns the response.
     """
-    if not request.is_json:
-        return jsonify({"error": "Content-Type must be application/json"}), 400
-    
+    print("JSON Message: ", request.get_json())
     recieved = request.get_json()
+    
+    if not recieved:
+        return jsonify({"Error": "No JSON received"}), 400
+
     user_input = recieved.get('user_txt')
 
     # Verify Message
     if not user_input:
-        return jsonify({"error": "user_txt missing"}), 400
+        return jsonify({"Error": "user_txt missing"}), 400
     
     # Process input through chatbot
     bot_output = bot.chat(user_input)
@@ -58,17 +79,19 @@ def get_response():
     }
 
     return jsonify(response_data), 200
-    
+
 
 #ROUTES FOR EXTERNAL API (E.G SPOTIFY AND SENSTIVE DATA)
 
 # @app.route('spotifyWebsiteVar{id}', methods=['GET'])
 # def get_playlists():
 
+# @app.route("/login-fail")
+# def failed():
 
 # Program run
 if __name__ == "__main__":
-    app.run(
+    application.run(
         host="0.0.0.0",
         port=5000,
         debug=False

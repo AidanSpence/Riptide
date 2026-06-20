@@ -226,6 +226,8 @@ class Chatbot:
             Recommendation
         """
         goal = self.detect_goal()
+        if(goal):
+            self.confused()
         style = self.detect_style()
         mood = self.detect_mood()
 
