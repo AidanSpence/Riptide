@@ -1,6 +1,6 @@
 // Global Confguration
-const BACKEND_ADDRESS = "0.0.0.0:5000/";
-
+//const BACKEND_ADDRESS = window.location.origin;
+const BACKEND_ADDRESS = 'http://127.0.0.1:5000'
 const playlist = [];
 
 const paths = {
@@ -8,24 +8,137 @@ const paths = {
   menuUp: "assets/arrowUp.svg",
   menuDown: "assets/arrowDown.svg",
   sendButton: "assets/send.svg",
+  fallbackImage: "assets/fallback-image.png"
 };
 
-// State Elements
+// Spotify Elements
+const CLIENT_ID = '3eed8ec7a7a8454393d3e118574bdd05'; 
+//const REDIRECT_URI = 'https://d11r265tlaxh0o.cloudfront.net/';
+const REDIRECT_URI = 'http://127.0.0.1:5500/_Website_/main.html'
+const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
+const RESPONSE_TYPE = 'code'
+let SPOTIFY_TOKEN = null;
+
+// Permissions requested
+const SCOPES = [
+    'user-read-private',
+    'user-read-email',
+    'playlist-read-private'
+];
+
+const authUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES.join(' '))}&response_type=${RESPONSE_TYPE}&show_dialog=true`;
+
 const username = document.getElementById("userName");
+
+// ==========================================
+// Spotify Components
+// ==========================================
+
+function getAuthCode() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('code');
+}
+
+async function exchangeCodeForToken(code) {
+    const res = await fetch(`${BACKEND_ADDRESS}/api/spotify-token?code=${code}`);
+    const data = await res.json();
+    console.log("Token exchange response:", data); // Check for errors here
+    return data.access_token;
+}
+
+async function getPlaylists(token) {
+    const response = await fetch(`https://api.spotify.com/v1/me/playlists`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        console.error("Spotify API error:", await response.text());
+        return [];
+    }
+
+    const data = await response.json();
+    return data.items || [];
+}
+
+async function displayPlaylists(token) {
+  if (!token) {
+    console.log("No access token found in URL hash.");
+    return;
+  }
+
+  const playlists = await getPlaylists(token);
+
+  const playlistContainer = document.getElementById("playlistGrid");
+  if (!playlistContainer) {
+    console.log("playlistGrid not found");
+    return;
+  }
+
+  playlistContainer.innerHTML = ""; // Clear
+  console.log("Playlists received:", playlists);
+
+  playlists.forEach((playlist, index) => {
+    if (!playlist || !playlist.items) return; // Skip malformed items
+    const boxId = `box_${index + 1}`;
+    const playlistCard = document.createElement("div");
+
+    playlistCard.className = "playlist-item";
+    playlistCard.id = boxId;
+
+    const imageUrl = playlist.images?.[0]?.url || paths.fallbackImage;
+
+    playlistCard.innerHTML = `
+      <img src="${imageUrl}" alt="${playlist.name} cover" width="150">
+      <h3>${playlist.name}</h3>
+      <p>${playlist.items.total} tracks</p>`;
+
+    playlistContainer.appendChild(playlistCard);
+    dropdownCreate(boxId);
+  });
+}
+
+async function handleSpotifyLogin() {
+    const code = getAuthCode();
+    if (!code) return;
+
+    const token = await exchangeCodeForToken(code);
+
+    if (token) {
+      SPOTIFY_TOKEN = token;
+      displayPlaylists(token);
+    }
+}
+
+// For adding playlist dropdowns
+// async function getPlaylistTracks(playlistId, token) {
+//     const response = await fetch(`https://spotify.com{playlistId}/tracks?limit=50`, {
+//         method: 'GET',
+//         headers: {
+//             'Authorization': `Bearer ${token}`
+//         }
+//     });
+
+//     const data = await response.json();
+//     return data.items; // Array of track objects
+//}
+
+//   const playlistId = 'PlaylistId';
 
 // ==========================================
 // UI Components
 // ==========================================
 
 function sendButtonCreate() {
-  const chatbox = document.getElementById("chatbot-input-button");
+  const chatbox = document.getElementById("chatbotInputButton");
   if (!chatbox) {
-    console.log("chatbot-input-button not found");
+    console.log("chatbotInputButton not found");
     return;
   }
 
   const sendButton = document.createElement("img");
-  sendButton.src = paths.sendButtonPath;
+  sendButton.src = paths.sendButton;
   sendButton.alt = "Send Button";
   sendButton.classList.add("send-button");
   sendButton.id = "send-button";
@@ -46,7 +159,7 @@ function iconCreate() {
   }
 
   const userIcon = document.createElement("img");
-  userIcon.src = paths.userIconPath;
+  userIcon.src = paths.userIcon;
   userIcon.alt = "User icon";
   userIcon.style.width = "100%";
   userIcon.style.height = "100%";
@@ -62,7 +175,7 @@ function dropdownCreate(targetId) {
   }
 
   const dropdown = document.createElement("img");
-  dropdown.src = paths.menuDownPath;
+  dropdown.src = paths.menuDown;
   dropdown.alt = "Dropdown menu";
   dropdown.className = "dropdown-arrow";
 
@@ -105,35 +218,35 @@ async function playlistFetchFlask() {
   }
 }
 
-async function loadPlaylists() {
-  const playlistContainer = document.getElementById("playlist-grid");
-  if (!playlistContainer) {
-    console.log("playlist-grid not found");
-    return;
-  }
+// async function loadPlaylists() {
+//   const playlistContainer = document.getElementById("playlistGrid");
+//   if (!playlistContainer) {
+//     console.log("playlistGrid not found");
+//     return;
+//   }
 
-  playlistContainer.innerHTML = "";
-  const playlists = await playlistFetchFlask();
+//   playlistContainer.innerHTML = "";
+//   const playlists = await playlistFetchFlask();
 
-  playlists.forEach((playlist, index) => {
-    const boxId = `box_${index + 1}`;
-    const cardbox = document.createElement("div");
-    cardBox.className = "playlist-item";
-    cardBox.id = boxId;
+//   playlists.forEach((playlist, index) => {
+//     const boxId = `box_${index + 1}`;
+//     const cardBox = document.createElement("div");
+//     cardBox.className = "playlist-item";
+//     cardBox.id = boxId;
 
-    let contentStructure = "";
-    if (playlist.title) {
-      contentStructure += `<h3>${playlist.title}</h3>`;
-    }
-    if (playlist.duration) {
-      contentStructure += `<p>Duration: ${playlist.duration}</p>`;
-    }
+//     let contentStructure = "";
+//     if (playlist.title) {
+//       contentStructure += `<h3>${playlist.title}</h3>`;
+//     }
+//     if (playlist.duration) {
+//       contentStructure += `<p>Duration: ${playlist.duration}</p>`;
+//     }
 
-    cardBox.innerHTML = contentStructure;
-    playlistContainer.appendChild(cardBox);
-    dropdownCreate(boxId);
-  });
-}
+//     cardBox.innerHTML = contentStructure;
+//     playlistContainer.appendChild(cardBox);
+//     dropdownCreate(boxId);
+//   });
+// }
 
 // ==========================================
 // Dialogue & Interface
@@ -143,13 +256,13 @@ async function loadChat(text, alignmentId) {
   // This is for loading previous chats, it takes an input from flask
   const chatContainer = document.getElementById("chatboxWindow");
   if (!chatContainer) {
-    console.log("playlist-grid not found");
+    console.log("chatboxWindow not found");
     return;
   }
 
   const chatItem = document.createElement("p");
   chatItem.className = "chat-item";
-  chatItem.textContent = text;
+  chatItem.innerHTML = text;
 
   // Format element alignments based on id
   if (String(alignmentId) === "0") {
@@ -168,9 +281,9 @@ async function loadChat(text, alignmentId) {
 }
 
 async function getChatBoxText() {
-  const chatInput = document.getElementById("chatboxinput");
+  const chatInput = document.getElementById("chatboxInput");
   if (!chatInput) {
-    console.log("chatboxinput not found");
+    console.log("chatboxInput not found");
     return;
   }
   let box_text = chatInput.value;
@@ -181,10 +294,10 @@ async function getChatBoxText() {
 async function flaskChatSendResponse() {
   const tosend = await getChatBoxText();
   if (tosend != "") {
+
     loadChat(tosend, 1);
 
-    const chatInput = document.getElementById("chatboxinput");
-    if (chatInput) chatInput.value = "";
+    document.getElementById('chatboxInput').value = ""
 
     console.log(`Sent: `, tosend);
 
@@ -224,7 +337,12 @@ async function navButtonsListen() {
   // Placeholder button listerners
   if (playlistButton)
     playlistButton.addEventListener("click", () => {
-      console.log("playlist button clicked");
+        console.log("playlist button clicked");
+        if (SPOTIFY_TOKEN) {
+            displayPlaylists(SPOTIFY_TOKEN);
+        } else {
+            console.log("No Spotify token available — user may not be logged in");
+        }
     });
   if (infoButton)
     infoButton.addEventListener("click", () => {
@@ -233,6 +351,7 @@ async function navButtonsListen() {
   if (loginButton)
     loginButton.addEventListener("click", () => {
       console.log("login button clicked");
+      window.location.href = authUrl;
     });
   if (chatButton)
     chatButton.addEventListener("click", () => {
@@ -254,28 +373,29 @@ async function init() {
   iconCreate();
   sendButtonCreate();
   textAreaHandler();
+  handleSpotifyLogin();
   if (username) username.textContent = "George";
 }
 
 // refreshes the playlists, in a function for when additional functionality required
 async function playlistRefresh() {
-  loadPlaylists();
+  if (SPOTIFY_TOKEN) {
+    displayPlaylists(SPOTIFY_TOKEN);
+  } else {
+    console.log("No Spotify token available — user may not be logged in");
+  }
+  //loadPlaylists();
 }
 
-// async function infoPopup() {
-
-// }
-
 function textAreaHandler() {
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      const chatInput = document.getElementById("chatboxinput");
-      if (chatInput && document.activeElement === chatInput) {
-        event.preventDefault();
-        flaskChatSendResponse();
-      }
-    }
-  });
+
+    document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                flaskChatSendResponse();
+                document.getElementById('chatboxInput').value = ""
+            }
+        });
 }
 
 // Initialization Pipelines
