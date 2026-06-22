@@ -1,6 +1,6 @@
 // Global Confguration
-//const BACKEND_ADDRESS = window.location.origin;
-const BACKEND_ADDRESS = 'http://127.0.0.1:5000'
+const BACKEND_ADDRESS = window.location.origin;
+//const BACKEND_ADDRESS = 'http://127.0.0.1:5000'
 const playlist = [];
 
 const paths = {
@@ -13,10 +13,10 @@ const paths = {
 
 // Spotify Elements
 const CLIENT_ID = '3eed8ec7a7a8454393d3e118574bdd05'; 
-//const REDIRECT_URI = 'https://d11r265tlaxh0o.cloudfront.net/';
-const REDIRECT_URI = 'http://127.0.0.1:5500/_Website_/main.html'
+const REDIRECT_URI = 'https://d11r265tlaxh0o.cloudfront.net/';
+//const REDIRECT_URI = 'http://127.0.0.1:5500/_Website_/main.html';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
-const RESPONSE_TYPE = 'code'
+const RESPONSE_TYPE = 'code';
 let SPOTIFY_TOKEN = null;
 
 // Permissions requested
