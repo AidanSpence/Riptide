@@ -1,6 +1,6 @@
 // Global Confguration
-const BACKEND_ADDRESS = window.location.origin;
-
+//const BACKEND_ADDRESS = window.location.origin;
+const BACKEND_ADDRESS = 'http://127.0.0.1:5000'
 const playlist = [];
 
 const paths = {
@@ -8,13 +8,16 @@ const paths = {
   menuUp: "assets/arrowUp.svg",
   menuDown: "assets/arrowDown.svg",
   sendButton: "assets/send.svg",
+  fallbackImage: "assets/fallback-image.png"
 };
 
 // Spotify Elements
-const client_id = '3eed8ec7a7a8454393d3e118574bdd05'; 
-const redirect_uri = 'https://d11r265tlaxh0o.cloudfront.net/login-fail';
+const CLIENT_ID = '3eed8ec7a7a8454393d3e118574bdd05'; 
+//const REDIRECT_URI = 'https://d11r265tlaxh0o.cloudfront.net/';
+const REDIRECT_URI = 'http://127.0.0.1:5500/_Website_/main.html'
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
-const RESPONSE_TYPE = 'token'
+const RESPONSE_TYPE = 'code'
+let SPOTIFY_TOKEN = null;
 
 // Permissions requested
 const SCOPES = [
@@ -31,26 +34,84 @@ const username = document.getElementById("userName");
 // Spotify Components
 // ==========================================
 
-function getUserToken() {
-    const hash = window.location.hash;
-    if (!hash) return null;
+function getAuthCode() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('code');
+}
 
-    const params = new URLSearchParams(hash.substring(1));
-    return params.get('access_token'); // Valid for 1 hour
+async function exchangeCodeForToken(code) {
+    const res = await fetch(`${BACKEND_ADDRESS}/api/spotify-token?code=${code}`);
+    const data = await res.json();
+    console.log("Token exchange response:", data); // Check for errors here
+    return data.access_token;
 }
 
 async function getPlaylists(token) {
-    const response = await fetch(`https://spotify.com`, {
-        method: 'GET',
+    const response = await fetch(`https://api.spotify.com/v1/me/playlists`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
     });
 
+    if (!response.ok) {
+        console.error("Spotify API error:", await response.text());
+        return [];
+    }
+
     const data = await response.json();
-    return data.items; // Array of playlists
+    return data.items || [];
 }
 
+async function displayPlaylists(token) {
+  if (!token) {
+    console.log("No access token found in URL hash.");
+    return;
+  }
+
+  const playlists = await getPlaylists(token);
+
+  const playlistContainer = document.getElementById("playlistGrid");
+  if (!playlistContainer) {
+    console.log("playlistGrid not found");
+    return;
+  }
+
+  playlistContainer.innerHTML = ""; // Clear
+  console.log("Playlists received:", playlists);
+
+  playlists.forEach((playlist, index) => {
+    if (!playlist || !playlist.items) return; // Skip malformed items
+    const boxId = `box_${index + 1}`;
+    const playlistCard = document.createElement("div");
+
+    playlistCard.className = "playlist-item";
+    playlistCard.id = boxId;
+
+    const imageUrl = playlist.images?.[0]?.url || paths.fallbackImage;
+
+    playlistCard.innerHTML = `
+      <img src="${imageUrl}" alt="${playlist.name} cover" width="150">
+      <h3>${playlist.name}</h3>
+      <p>${playlist.items.total} tracks</p>`;
+
+    playlistContainer.appendChild(playlistCard);
+    dropdownCreate(boxId);
+  });
+}
+
+async function handleSpotifyLogin() {
+    const code = getAuthCode();
+    if (!code) return;
+
+    const token = await exchangeCodeForToken(code);
+
+    if (token) {
+      SPOTIFY_TOKEN = token;
+      displayPlaylists(token);
+    }
+}
+
+// For adding playlist dropdowns
 // async function getPlaylistTracks(playlistId, token) {
 //     const response = await fetch(`https://spotify.com{playlistId}/tracks?limit=50`, {
 //         method: 'GET',
@@ -64,44 +125,6 @@ async function getPlaylists(token) {
 //}
 
 //   const playlistId = 'PlaylistId';
-
-async function displayPlaylists() {
-  const token = getUserToken();
-  if (!token) {
-    console.log("No access token found in URL hash.");
-    return;
-  }
-
-  const playlists = await getPlaylistTracks(token);
-
-  const playlistContainer = document.getElementById("playlistGrid");
-  if (!playlistContainer) {
-    console.log("playlistGrid not found");
-    return;
-  }
-
-  playlistContainer.innerHTML = ""; // Clear
-
-  playlists.forEach((playlist, index) => {
-    const boxId = `box_${index + 1}`;
-    const cardBox = document.createElement("div");
-
-    cardBox.className = "playlist-item";
-    cardBox.id = boxId;
-
-    //const imageUrl = playlist.images.length > 0 ? playlist.images[0].url : 'fallback-image.png'; enable once fallback image is added
-
-    cardBox.innerHTML = `
-      <img src="${imageUrl}" alt="${playlist.name} cover" width="150">
-      <h3>${playlist.name}</h3>
-      <p>${playlist.tracks.total} tracks</p>
-      <button onclick="loadTracks('${playlist.id}')">View Tracks</button>`;
-
-    playlistContainer.appendChild(cardBox);
-    dropdownCreate(boxId);
-  });
-}
-
 
 // ==========================================
 // UI Components
@@ -195,35 +218,35 @@ async function playlistFetchFlask() {
   }
 }
 
-async function loadPlaylists() {
-  const playlistContainer = document.getElementById("playlistGrid");
-  if (!playlistContainer) {
-    console.log("playlistGrid not found");
-    return;
-  }
+// async function loadPlaylists() {
+//   const playlistContainer = document.getElementById("playlistGrid");
+//   if (!playlistContainer) {
+//     console.log("playlistGrid not found");
+//     return;
+//   }
 
-  playlistContainer.innerHTML = "";
-  const playlists = await playlistFetchFlask();
+//   playlistContainer.innerHTML = "";
+//   const playlists = await playlistFetchFlask();
 
-  playlists.forEach((playlist, index) => {
-    const boxId = `box_${index + 1}`;
-    const cardBox = document.createElement("div");
-    cardBox.className = "playlist-item";
-    cardBox.id = boxId;
+//   playlists.forEach((playlist, index) => {
+//     const boxId = `box_${index + 1}`;
+//     const cardBox = document.createElement("div");
+//     cardBox.className = "playlist-item";
+//     cardBox.id = boxId;
 
-    let contentStructure = "";
-    if (playlist.title) {
-      contentStructure += `<h3>${playlist.title}</h3>`;
-    }
-    if (playlist.duration) {
-      contentStructure += `<p>Duration: ${playlist.duration}</p>`;
-    }
+//     let contentStructure = "";
+//     if (playlist.title) {
+//       contentStructure += `<h3>${playlist.title}</h3>`;
+//     }
+//     if (playlist.duration) {
+//       contentStructure += `<p>Duration: ${playlist.duration}</p>`;
+//     }
 
-    cardBox.innerHTML = contentStructure;
-    playlistContainer.appendChild(cardBox);
-    dropdownCreate(boxId);
-  });
-}
+//     cardBox.innerHTML = contentStructure;
+//     playlistContainer.appendChild(cardBox);
+//     dropdownCreate(boxId);
+//   });
+// }
 
 // ==========================================
 // Dialogue & Interface
@@ -239,7 +262,7 @@ async function loadChat(text, alignmentId) {
 
   const chatItem = document.createElement("p");
   chatItem.className = "chat-item";
-  chatItem.textContent = text;
+  chatItem.innerHTML = text;
 
   // Format element alignments based on id
   if (String(alignmentId) === "0") {
@@ -314,7 +337,12 @@ async function navButtonsListen() {
   // Placeholder button listerners
   if (playlistButton)
     playlistButton.addEventListener("click", () => {
-      console.log("playlist button clicked");
+        console.log("playlist button clicked");
+        if (SPOTIFY_TOKEN) {
+            displayPlaylists(SPOTIFY_TOKEN);
+        } else {
+            console.log("No Spotify token available — user may not be logged in");
+        }
     });
   if (infoButton)
     infoButton.addEventListener("click", () => {
@@ -329,9 +357,6 @@ async function navButtonsListen() {
     chatButton.addEventListener("click", () => {
       console.log("Chats button clicked");
     });
-  if (window.location.hash) {
-        displayPlaylists();
-    }
 }
 
 async function navButtonsCloseListen() {
@@ -348,28 +373,29 @@ async function init() {
   iconCreate();
   sendButtonCreate();
   textAreaHandler();
+  handleSpotifyLogin();
   if (username) username.textContent = "George";
 }
 
 // refreshes the playlists, in a function for when additional functionality required
 async function playlistRefresh() {
-  loadPlaylists();
+  if (SPOTIFY_TOKEN) {
+    displayPlaylists(SPOTIFY_TOKEN);
+  } else {
+    console.log("No Spotify token available — user may not be logged in");
+  }
+  //loadPlaylists();
 }
 
-// async function infoPopup() {
-
-// }
-
 function textAreaHandler() {
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      const chatInput = document.getElementById("chatboxinput");
-      if (chatInput && document.activeElement === chatInput) {
-        event.preventDefault();
-        flaskChatSendResponse();
-      }
-    }
-  });
+
+    document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                flaskChatSendResponse();
+                document.getElementById('chatboxInput').value = ""
+            }
+        });
 }
 
 // Initialization Pipelines

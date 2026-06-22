@@ -189,9 +189,10 @@ class Chatbot:
             pattern = value
             found_match = re.search(pattern, self.message)
             if found_match and goal =='playlist':
-                return 0
+                return '0'
             elif found_match and goal =='new_song':
-                return 1
+                return '1'
+        return None
             
     def detect_style(self):
         style = re.search(self.style, self.message)
@@ -226,8 +227,9 @@ class Chatbot:
             Recommendation
         """
         goal = self.detect_goal()
-        if(goal):
-            self.confused()
+        if goal is None:
+            return self.confused()
+        
         style = self.detect_style()
         mood = self.detect_mood()
 
@@ -244,7 +246,7 @@ class Chatbot:
         query_vector = np.concatenate([request_text_scaled, text_reduced], axis=1).reshape(-1)
 
         # Set playlist size
-        if goal == 0:
+        if goal == '0':
             length = self.extract_number()
             k_val = int(length) if length is not None else 10
         else:
