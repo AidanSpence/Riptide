@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # Spotify Codes
 CLIENT_ID = '3eed8ec7a7a8454393d3e118574bdd05'
-CLIENT_SECRET = '53cc431ea67c40ccbc5dbc9fd288f6e2'
+CLIENT_SECRET = ''
 REDIRECT_URI = 'https://d11r265tlaxh0o.cloudfront.net/'
 #REDIRECT_URI = 'http://127.0.0.1:5500/_Website_/main.html'
 
